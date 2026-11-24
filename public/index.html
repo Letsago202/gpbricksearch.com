@@ -33,6 +33,22 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
 <div class="rowhead"><div><h2 id="resultsTitle">Explore LEGO sets</h2><p id="resultsHint">Search above to load live Rebrickable catalog results.</p></div></div>
 <div class="results" id="results"><div class="empty">Your search results will appear here once you search the catalog.</div></div></section>
 <section class="panels" id="prices"><div class="panel dark"><div class="kicker">Collector tools</div><h3>Price comparisons & history</h3><p>Marketplace prices and historical trends are planned for a later integration. Rebrickable does not provide pricing data, so GPBrickSearch will connect to separate permitted sources.</p></div><div class="panel" id="collection"><div class="kicker" style="color:#b51f27">Coming next</div><h3>Your LEGO collection</h3><p>Accounts, favorites, wishlists and collection value tracking will be added after the catalog search is working.</p></div></section>
+
+<section class="panel" id="account" style="margin-bottom:20px">
+  <h2>My GPBrickSearch Account</h2>
+  <p>Create an account or sign in to manage your LEGO collection.</p>
+
+  <form id="authForm">
+    <input id="authEmail" type="email" placeholder="Email address" required>
+    <input id="authPassword" type="password" placeholder="Password (at least 6 characters)" minlength="6" required>
+    <button class="primary" type="submit" id="loginButton">Log In</button>
+    <button class="tab" type="button" id="signupButton">Create Account</button>
+  </form>
+
+  <p id="authMessage" role="status"></p>
+  <button class="tab" type="button" id="logoutButton" hidden>Log Out</button>
+</section>
+
 </main>
 <footer><div class="foot"><div><strong>GPBrickSearch</strong><br><small>Discover. Compare. Collect.</small></div><small>Independent project; not affiliated with or endorsed by the LEGO Group.</small></div></footer>
 <script>
