@@ -1,101 +1,493 @@
+
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Search LEGO minifigures, sets and parts with GPBrickSearch.">
 <title>GPBrickSearch — Everything LEGO. One Search.</title>
 <style>
-:root{--red:#e3292e;--navy:#142335;--blue:#245c8e;--ink:#182432;--muted:#667587;--line:#e2e7ed;--bg:#f5f7f9}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,Segoe UI,Arial,sans-serif}
-header{background:#111b27;color:white;padding:12px max(18px,calc((100% - 1160px)/2));display:flex;justify-content:space-between;align-items:center;gap:20px}
-.brand{display:flex;align-items:center;gap:10px;color:white;text-decoration:none;font-size:20px;font-weight:900;letter-spacing:-.6px}.logo{background:var(--red);border-radius:11px;width:40px;height:40px;display:grid;place-items:center;box-shadow:inset 0 -3px #a9141b}
-nav{display:flex;gap:20px}nav a{color:#dce4ec;text-decoration:none;font-size:13px;font-weight:700}
-main{max-width:1160px;margin:auto;padding:28px 20px 70px}.hero{background:linear-gradient(125deg,#142334,#244967);color:white;border-radius:22px;padding:42px;position:relative;overflow:hidden}.kicker{color:#ffcf55;font-size:11px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase}.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.02;letter-spacing:-2px;margin:12px 0}.hero p{color:#d2deea;max-width:590px}.search{display:flex;background:white;border-radius:12px;padding:6px;max-width:760px;margin-top:24px;gap:5px}.search input{border:0;outline:0;min-width:0;flex:1;padding:12px;color:#17212b;font-size:15px}.search button,.primary{background:var(--red);color:white;border:0;border-radius:9px;padding:0 20px;font-weight:850}.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.quick button{border:1px solid #ffffff55;background:#ffffff12;color:white;border-radius:30px;padding:6px 12px;font-size:12px}
-.rowhead{display:flex;justify-content:space-between;align-items:end;margin:30px 0 14px;gap:12px}.rowhead h2{font-size:22px;margin:0;letter-spacing:-.5px}.rowhead p{margin:3px 0 0;color:var(--muted);font-size:13px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap}.tab{background:white;border:1px solid var(--line);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:800;color:#425164}.tab[aria-pressed=true]{background:#172b3e;color:white;border-color:#172b3e}
-.status{display:none;margin:18px 0;padding:12px 15px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:13px}.status.error{border-color:#f0b7b9;background:#fff5f5;color:#8b2025}.status.good{background:#f0faf4;border-color:#bde5ca;color:#205e39}
-.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{background:white;border:1px solid var(--line);border-radius:14px;overflow:hidden;min-width:0}.pic{height:160px;background:linear-gradient(145deg,#f2f5f7,#e8edf2);display:grid;place-items:center;color:#7b8b9c;font-size:45px}.pic img{width:100%;height:100%;object-fit:contain;padding:12px}.body{padding:13px}.body h3{font-size:14px;margin:0 0 4px}.meta{font-size:11px;color:var(--muted)}.id{font-size:12px;font-weight:800;color:#34485d;margin-top:8px}.empty{grid-column:1/-1;background:white;border:1px dashed #cbd4de;border-radius:13px;text-align:center;padding:34px;color:var(--muted)}
-.panels{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px}.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:22px}.panel.dark{background:var(--navy);color:white;border:0}.panel p{color:var(--muted);font-size:13px}.panel.dark p{color:#c7d5e2}.panel h3{margin:0 0 7px}.pill{display:inline-block;border-radius:30px;background:#fce9e9;color:#a51e24;padding:5px 9px;font-size:10px;font-weight:900}
-footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px;margin:auto;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.foot small{color:#aab6c2}
-@media(max-width:800px){nav{display:none}.results{grid-template-columns:repeat(2,minmax(0,1fr))}.panels{grid-template-columns:1fr}.hero{padding:30px 23px}}
-@media(max-width:430px){main{padding:16px 12px 45px}.results{gap:9px}.pic{height:120px}.body{padding:10px}.search button{padding:0 13px}}
+:root{
+  --red:#e3292e;
+  --red-dark:#bd2026;
+  --navy:#142335;
+  --blue:#245c8e;
+  --ink:#182432;
+  --muted:#667587;
+  --line:#e2e7ed;
+  --bg:#f4f6f9;
+  --white:#fff;
+  --shadow:0 5px 20px #1423350c;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font:15px/1.55 Inter,system-ui,Segoe UI,Arial,sans-serif;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+header{
+  background:#111b27;
+  color:white;
+  padding:12px max(18px,calc((100% - 1160px)/2));
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  box-shadow:0 3px 16px #101b2920;
+  position:relative;
+  z-index:10;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:white;
+  text-decoration:none;
+  font-size:20px;
+  font-weight:950;
+  letter-spacing:-.7px;
+}
+.logo{
+  background:var(--red);
+  border-radius:11px;
+  width:42px;
+  height:42px;
+  display:grid;
+  place-items:center;
+  box-shadow:inset 0 -3px #a9141b;
+  transition:transform .2s ease;
+}
+.brand:hover .logo{transform:rotate(-5deg)}
+nav{display:flex;gap:22px}
+nav a{
+  color:#dce4ec;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:750;
+  transition:color .2s;
+}
+nav a:hover{color:white}
+main{
+  max-width:1160px;
+  margin:auto;
+  padding:30px 20px 70px;
+}
+.hero{
+  background:
+    radial-gradient(circle at 90% 10%,#ffffff18,transparent 32%),
+    linear-gradient(125deg,#142334,#244967);
+  color:white;
+  border-radius:22px;
+  padding:46px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 12px 35px #14233520;
+}
+.kicker{
+  color:#ffcf55;
+  font-size:11px;
+  font-weight:950;
+  letter-spacing:1.7px;
+  text-transform:uppercase;
+}
+.hero h1{
+  font-size:clamp(36px,5vw,58px);
+  line-height:1.02;
+  letter-spacing:-2.5px;
+  margin:13px 0;
+  font-weight:950;
+}
+.hero p{color:#d2deea;max-width:590px}
+.search{
+  display:flex;
+  background:white;
+  border-radius:13px;
+  padding:6px;
+  max-width:760px;
+  margin-top:25px;
+  gap:5px;
+  box-shadow:0 8px 25px #00000020;
+}
+.search input{
+  border:0;
+  outline:0;
+  min-width:0;
+  flex:1;
+  padding:13px;
+  color:#17212b;
+  font-size:15px;
+}
+.search input:focus{outline:2px solid var(--red);border-radius:7px}
+.search button,.primary{
+  background:var(--red);
+  color:white;
+  border:0;
+  border-radius:9px;
+  padding:11px 20px;
+  font-weight:850;
+  transition:background .2s,transform .2s;
+}
+.search button:hover,.primary:hover{
+  background:var(--red-dark);
+  transform:translateY(-1px);
+}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.quick button{
+  border:1px solid #ffffff55;
+  background:#ffffff12;
+  color:white;
+  border-radius:30px;
+  padding:7px 13px;
+  font-size:12px;
+  transition:background .2s;
+}
+.quick button:hover{background:#ffffff2b}
+.rowhead{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin:32px 0 15px;
+  gap:12px;
+}
+.rowhead h2{font-size:22px;margin:0;letter-spacing:-.5px}
+.rowhead h3{margin:0}
+.rowhead p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:9px 14px;
+  font-size:13px;
+  font-weight:800;
+  color:#425164;
+  transition:all .2s;
+}
+.tab:hover{border-color:var(--blue);color:var(--blue)}
+.tab[aria-pressed=true]{
+  background:#172b3e;
+  color:white;
+  border-color:#172b3e;
+}
+.tab[aria-pressed=true]:hover{background:#244967}
+.status{
+  display:none;
+  margin:18px 0;
+  padding:12px 15px;
+  border-radius:10px;
+  background:#fff;
+  border:1px solid var(--line);
+  font-size:13px;
+}
+.status.error{border-color:#f0b7b9;background:#fff5f5;color:#8b2025}
+.status.good{background:#f0faf4;border-color:#bde5ca;color:#205e39}
+.results{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:15px;
+}
+.card{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:14px;
+  overflow:hidden;
+  min-width:0;
+  box-shadow:var(--shadow);
+  transition:transform .2s,box-shadow .2s;
+}
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 10px 25px #14233518;
+}
+.pic{
+  height:165px;
+  background:linear-gradient(145deg,#f2f5f7,#e8edf2);
+  display:grid;
+  place-items:center;
+  color:#7b8b9c;
+  font-size:45px;
+  border-bottom:1px solid var(--line);
+}
+.pic img{width:100%;height:100%;object-fit:contain;padding:12px}
+.body{padding:14px}
+.body h3{font-size:14px;margin:0 0 4px;line-height:1.4}
+.meta{font-size:11px;color:var(--muted)}
+.id{font-size:12px;font-weight:850;color:#34485d;margin-top:8px}
+.empty{
+  grid-column:1/-1;
+  background:white;
+  border:1px dashed #cbd4de;
+  border-radius:13px;
+  text-align:center;
+  padding:36px;
+  color:var(--muted);
+}
+.panels{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin-top:30px;
+  align-items:start;
+}
+.panel{
+  background:white;
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:23px;
+  box-shadow:var(--shadow);
+  min-width:0;
+}
+.panel.dark{
+  background:linear-gradient(135deg,#142335,#244967);
+  color:white;
+  border:0;
+}
+.panel p{color:var(--muted);font-size:13px}
+.panel.dark p{color:#c7d5e2}
+.panel h3{margin:0 0 7px}
+.panel h2{margin-top:0}
+.panel label{
+  display:block;
+  font-size:12px;
+  font-weight:800;
+  color:#425164;
+  margin:13px 0 5px;
+}
+.panel input,.panel select,.panel textarea{
+  width:100%;
+  border:1px solid #d8e0e8;
+  border-radius:9px;
+  padding:11px 12px;
+  background:white;
+  color:var(--ink);
+  max-width:100%;
+}
+.panel textarea{resize:vertical}
+.panel input:focus,.panel select:focus,.panel textarea:focus{
+  outline:2px solid #245c8e35;
+  border-color:var(--blue);
+}
+.panel button{max-width:100%}
+.pill{
+  display:inline-block;
+  border-radius:30px;
+  background:#fce9e9;
+  color:#a51e24;
+  padding:5px 10px;
+  font-size:10px;
+  font-weight:900;
+}
+#collectionDashboard h3{margin-top:20px}
+#collectionTotal{font-size:28px;font-weight:950}
+#collectionItems>div,#favoriteItems>div{
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  margin:10px 0;
+  background:#fff;
+}
+#collectionItems button,#favoriteItems button{
+  border:1px solid var(--line);
+  background:#f5f7f9;
+  border-radius:8px;
+  padding:7px 12px;
+  font-weight:750;
+}
+#collectionItems button:hover,#favoriteItems button:hover{
+  border-color:var(--red);
+  color:var(--red);
+}
+#forumFeed article{
+  padding:19px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  margin:13px 0;
+  background:white;
+  box-shadow:var(--shadow);
+}
+#forumFeed article h3{margin:8px 0}
+#forumFeed article p{white-space:pre-wrap}
+#forumFeed article button{margin-top:5px}
+#forumFeed input{min-width:0}
+#forumSort{max-width:150px}
+#profileEditor{
+  background:#f5f7f9;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px;
+}
+#avatarPreview{
+  width:100px;
+  height:100px;
+  object-fit:cover;
+  border-radius:50%;
+  margin-top:12px;
+  border:3px solid white;
+  box-shadow:0 2px 8px #0002;
+}
+#authForm{display:grid;gap:10px}
+#authForm input{width:100%}
+footer{
+  background:#111b27;
+  color:#d7e0e8;
+  padding:30px 20px;
+  margin-top:20px;
+}
+.foot{
+  max-width:1160px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+}
+.foot small{color:#aab6c2}
+[hidden]{display:none!important}
+button:focus-visible,a:focus-visible{
+  outline:3px solid var(--red);
+  outline-offset:3px;
+}
+@media(max-width:900px){
+  .results{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:800px){
+  nav{display:none}
+  .results{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .panels{grid-template-columns:1fr}
+  .hero{padding:32px 24px}
+}
+@media(max-width:430px){
+  main{padding:16px 12px 45px}
+  .results{gap:9px}
+  .pic{height:125px}
+  .body{padding:10px}
+  .search button{padding:0 13px}
+  .hero{border-radius:16px}
+  .hero h1{letter-spacing:-1.8px}
+  .panel{padding:17px}
+  .rowhead{align-items:start}
+}
 </style>
 </head>
 <body>
-<header><a class="brand" href="/"><span class="logo">GP</span>GPBrickSearch</a><nav><a href="#search">Search</a><a href="#catalog">Catalog</a><a href="#prices">Price Guide</a><a href="#collection">My Collection</a><a href="#forum">Forum</a></nav></header><main>
-<section class="hero" id="search"><div class="kicker">The LEGO discovery engine</div><h1>Everything LEGO.<br>One Search.</h1><p>Find minifigures, sets and parts. Explore the catalog and discover your next collectible.</p>
-<form class="search" id="searchForm"><input id="query" placeholder="Try a name, set number or part number…" autocomplete="off" required><button type="submit">Search</button></form>
-<div class="quick"><button type="button" data-q="Batman">Batman</button><button type="button" data-q="75192">75192</button><button type="button" data-q="3001">3001</button><button type="button" data-q="Star Wars">Star Wars</button></div></section>
-<section id="catalog"><div class="rowhead"><div><h2>Search the catalog</h2><p>Choose what you want to find.</p></div><span class="pill" id="apiState">Checking API…</span></div>
-<div class="tabs" role="group" aria-label="Catalog category"><button class="tab" data-type="sets" aria-pressed="true">LEGO Sets</button><button class="tab" data-type="minifigs" aria-pressed="false">Minifigures</button><button class="tab" data-type="parts" aria-pressed="false">Bricks & Parts</button></div>
-<div class="status" id="status" role="status" aria-live="polite"></div>
-<div class="rowhead"><div><h2 id="resultsTitle">Explore LEGO sets</h2><p id="resultsHint">Search above to load live Rebrickable catalog results.</p></div></div>
-<div class="results" id="results"><div class="empty">Your search results will appear here once you search the catalog.</div></div></section>
-<section class="panels" id="prices"><div class="panel dark"><div class="kicker">Collector tools</div><h3>Price comparisons & history</h3><p>Marketplace prices and historical trends are planned for a later integration. Rebrickable does not provide pricing data, so GPBrickSearch will connect to separate permitted sources.</p></div><div class="panel" id="collection">
 
-  <div class="kicker" style="color:#b51f27">Your personal LEGO library</div>
-  <h3>My LEGO Collection</h3>
-  <p>Add and manage the LEGO sets, minifigures, and parts you own.</p>
+<header>
+  <a class="brand" href="/"><span class="logo">GP</span>GPBrickSearch</a>
+  <nav>
+    <a href="#search">Search</a>
+    <a href="#catalog">Catalog</a>
+    <a href="#prices">Price Guide</a>
+    <a href="#collection">My Collection</a>
+    <a href="#forum">Forum</a>
+  </nav>
+</header>
 
-  <div id="collectionLoggedOut">
-    <p>Log in to view and manage your collection.</p>
+<main>
+<section class="hero" id="search">
+  <div class="kicker">The LEGO discovery engine</div>
+  <h1>Everything LEGO.<br>One Search.</h1>
+  <p>Find minifigures, sets and parts. Explore the catalog and discover your next collectible.</p>
+  <form class="search" id="searchForm">
+    <input id="query" placeholder="Try a name, set number or part number…" autocomplete="off" required>
+    <button type="submit">Search</button>
+  </form>
+  <div class="quick">
+    <button type="button" data-q="Batman">Batman</button>
+    <button type="button" data-q="75192">75192</button>
+    <button type="button" data-q="3001">3001</button>
+    <button type="button" data-q="Star Wars">Star Wars</button>
+  </div>
+</section>
+
+<section id="catalog">
+  <div class="rowhead">
+    <div><h2>Search the catalog</h2><p>Choose what you want to find.</p></div>
+    <span class="pill" id="apiState">Checking API…</span>
+  </div>
+  <div class="tabs" role="group" aria-label="Catalog category">
+    <button class="tab" data-type="sets" aria-pressed="true">LEGO Sets</button>
+    <button class="tab" data-type="minifigs" aria-pressed="false">Minifigures</button>
+    <button class="tab" data-type="parts" aria-pressed="false">Bricks & Parts</button>
+  </div>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+  <div class="rowhead">
+    <div><h2 id="resultsTitle">Explore LEGO sets</h2><p id="resultsHint">Search above to load live Rebrickable catalog results.</p></div>
+  </div>
+  <div class="results" id="results">
+    <div class="empty">Your search results will appear here once you search the catalog.</div>
+  </div>
+</section>
+
+<section class="panels" id="prices">
+  <div class="panel dark">
+    <div class="kicker">Collector tools</div>
+    <h3>Price comparisons & history</h3>
+    <p>Marketplace prices and historical trends are planned for a later integration. Rebrickable does not provide pricing data, so GPBrickSearch will connect to separate permitted sources.</p>
   </div>
 
-  <div id="collectionDashboard" hidden>
-    <h3>Add an item</h3>
+  <div class="panel" id="collection">
+    <div class="kicker" style="color:#b51f27">Your personal LEGO library</div>
+    <h3>My LEGO Collection</h3>
+    <p>Add and manage the LEGO sets, minifigures, and parts you own.</p>
 
-    <form id="collectionForm">
-      <label for="collectionType">Item type</label>
-      <select id="collectionType" required>
-        <option value="sets">LEGO Set</option>
-        <option value="minifigs">Minifigure</option>
-        <option value="parts">Brick or Part</option>
-      </select>
-
-      <label for="collectionId">Set number or item ID</label>
-      <input id="collectionId" required placeholder="Example: 75192">
-
-      <label for="collectionName">Item name</label>
-      <input id="collectionName" required placeholder="Example: Millennium Falcon">
-
-      <label for="collectionQuantity">Quantity</label>
-      <input id="collectionQuantity" type="number" min="1" value="1" required>
-
-      <label for="collectionCondition">Condition</label>
-      <select id="collectionCondition">
-        <option value="New">New</option>
-        <option value="Used">Used</option>
-        <option value="Incomplete">Incomplete</option>
-      </select>
-
-      <label for="collectionNotes">Notes (optional)</label>
-      <input id="collectionNotes" placeholder="Any extra details">
-      <label for="collectionValue">Estimated Value ($)</label>
-<input id="collectionValue" type="number" min="0" step="0.01" placeholder="Example: 249.99">
-
-      <button class="primary" type="submit" style="padding:12px 18px;margin-top:12px">
-        Add to My Collection
-      </button>
-    </form>
-
-    <p id="collectionMessage" role="status"></p>
-<div style="background:#142335;color:white;padding:16px;border-radius:12px;margin-top:20px">
-  <div style="font-size:12px;color:#c7d5e2">TOTAL ESTIMATED COLLECTION VALUE</div>
-  <div id="collectionTotal" style="font-size:28px;font-weight:900">$0.00</div>
-</div>
-    <h3 style="margin-top:24px">My Items</h3>
-    <div id="collectionItems">
-      <p>Your collection will appear here.</p>
+    <div id="collectionLoggedOut">
+      <p>Log in to view and manage your collection.</p>
     </div>
-    
-<h3 style="margin-top:28px">❤️ My Favorites</h3>
-<p>Your saved LEGO sets, minifigures, and parts.</p>
-<div id="favoriteItems">
-  <p>Your favorites will appear here.</p>
-</div>
 
+    <div id="collectionDashboard" hidden>
+      <h3>Add an item</h3>
+      <form id="collectionForm">
+        <label for="collectionType">Item type</label>
+        <select id="collectionType" required>
+          <option value="sets">LEGO Set</option>
+          <option value="minifigs">Minifigure</option>
+          <option value="parts">Brick or Part</option>
+        </select>
+
+        <label for="collectionId">Set number or item ID</label>
+        <input id="collectionId" required placeholder="Example: 75192">
+
+        <label for="collectionName">Item name</label>
+        <input id="collectionName" required placeholder="Example: Millennium Falcon">
+
+        <label for="collectionQuantity">Quantity</label>
+        <input id="collectionQuantity" type="number" min="1" value="1" required>
+
+        <label for="collectionCondition">Condition</label>
+        <select id="collectionCondition">
+          <option value="New">New</option>
+          <option value="Used">Used</option>
+          <option value="Incomplete">Incomplete</option>
+        </select>
+
+        <label for="collectionNotes">Notes (optional)</label>
+        <input id="collectionNotes" placeholder="Any extra details">
+
+        <label for="collectionValue">Estimated Value ($)</label>
+        <input id="collectionValue" type="number" min="0" step="0.01" placeholder="Example: 249.99">
+
+        <button class="primary" type="submit" style="margin-top:12px">Add to My Collection</button>
+      </form>
+
+      <p id="collectionMessage" role="status"></p>
+
+      <div style="background:#142335;color:white;padding:16px;border-radius:12px;margin-top:20px">
+        <div style="font-size:12px;color:#c7d5e2">TOTAL ESTIMATED COLLECTION VALUE</div>
+        <div id="collectionTotal">$0.00</div>
+      </div>
+
+      <h3 style="margin-top:24px">My Items</h3>
+      <div id="collectionItems"><p>Your collection will appear here.</p></div>
+
+      <h3 style="margin-top:28px">❤️ My Favorites</h3>
+      <p>Your saved LEGO sets, minifigures, and parts.</p>
+      <div id="favoriteItems"><p>Your favorites will appear here.</p></div>
+    </div>
   </div>
-</div>
 </section>
 
 <section class="panel" id="forum" style="margin-bottom:20px">
@@ -119,36 +511,23 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
         <option>LEGO News</option>
         <option>Questions</option>
       </select>
-
       <label for="forumTitle">Post title</label>
-      <input id="forumTitle" maxlength="160" minlength="5"
-        placeholder="What would you like to discuss?" required>
-
+      <input id="forumTitle" maxlength="160" minlength="5" placeholder="What would you like to discuss?" required>
       <label for="forumBody">Your post</label>
-      <textarea id="forumBody" maxlength="10000" rows="4"
-        placeholder="Share your thoughts with the community..." required></textarea>
-
-      <button class="primary" type="submit" style="padding:12px 18px;margin-top:12px">
-        Publish Discussion
-      </button>
+      <textarea id="forumBody" maxlength="10000" rows="4" placeholder="Share your thoughts with the community..." required></textarea>
+      <button class="primary" type="submit" style="margin-top:12px">Publish Discussion</button>
     </form>
     <p id="forumMessage" role="status"></p>
   </div>
 
   <div class="rowhead">
-    <div>
-      <h3>Community Discussions</h3>
-      <p>See what LEGO fans are talking about.</p>
-    </div>
+    <div><h3>Community Discussions</h3><p>See what LEGO fans are talking about.</p></div>
     <select id="forumSort" aria-label="Sort discussions">
       <option value="new">Newest</option>
       <option value="top">Top Rated</option>
     </select>
   </div>
-
-  <div id="forumFeed">
-    <p>Loading discussions...</p>
-  </div>
+  <div id="forumFeed"><p>Loading discussions...</p></div>
 </section>
 
 <section class="panel" id="account" style="margin-bottom:20px">
@@ -156,906 +535,845 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
   <p>Create an account or sign in to manage your LEGO collection.</p>
 
   <form id="authForm">
-    <input id="profileUsername" type="text"
-  placeholder="Choose a username"
-  maxlength="30">
+    <input id="profileUsername" type="text" placeholder="Choose a username" maxlength="30">
     <input id="authEmail" type="email" placeholder="Email address" required>
     <input id="authPassword" type="password" placeholder="Password (at least 6 characters)" minlength="6" required>
     <button class="primary" type="submit" id="loginButton">Log In</button>
     <button class="tab" type="button" id="signupButton">Create Account</button>
   </form>
-<div id="profileEditor" hidden style="margin-top:20px;padding:16px;background:#f5f7f9;border-radius:12px">
-  <h3>My Profile</h3>
-  <div style="margin:15px 0">
-  <label for="avatarUpload">My Profile Picture</label>
-  <input
-    id="avatarUpload"
-    type="file"
-    accept="image/png,image/jpeg,image/webp"
-  >
 
-  <img
-    id="avatarPreview"
-    alt="Your profile picture"
-    hidden
-    style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-top:12px"
-  >
-
-  <button
-    class="primary"
-    type="button"
-    id="uploadAvatarButton"
-    style="padding:10px 16px;margin-top:10px"
-  >
-    Upload Profile Picture
-  </button>
-
-  <p id="avatarMessage" role="status"></p>
-</div>
-  <label for="savedUsername">My Username</label>
-  <input id="savedUsername" type="text" maxlength="30" placeholder="Choose your username">
-  <button class="primary" type="button" id="saveUsernameButton" style="padding:10px 16px;margin-top:10px">
-    Save Username
-  </button>
-  <p id="profileMessage" role="status"></p>
-</div>
+  <div id="profileEditor" hidden style="margin-top:20px">
+    <h3>My Profile</h3>
+    <div style="margin:15px 0">
+      <label for="avatarUpload">My Profile Picture</label>
+      <input id="avatarUpload" type="file" accept="image/png,image/jpeg,image/webp">
+      <img id="avatarPreview" alt="Your profile picture" hidden>
+      <button class="primary" type="button" id="uploadAvatarButton" style="margin-top:10px">Upload Profile Picture</button>
+      <p id="avatarMessage" role="status"></p>
+    </div>
+    <label for="savedUsername">My Username</label>
+    <input id="savedUsername" type="text" maxlength="30" placeholder="Choose your username">
+    <button class="primary" type="button" id="saveUsernameButton" style="margin-top:10px">Save Username</button>
+    <p id="profileMessage" role="status"></p>
+  </div>
   <p id="authMessage" role="status"></p>
   <button class="tab" type="button" id="logoutButton" hidden>Log Out</button>
 </section>
-
 </main>
-<footer><div class="foot"><div><strong>GPBrickSearch</strong><br><small>Discover. Compare. Collect.</small></div><small>Independent project; not affiliated with or endorsed by the LEGO Group.</small></div></footer>
+
+<footer>
+  <div class="foot">
+    <div><strong>GPBrickSearch</strong><br><small>Discover. Compare. Collect.</small></div>
+    <small>Independent project; not affiliated with or endorsed by the LEGO Group.</small>
+  </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 let selectedType="sets";
-const SUPABASE_URL = "https://juvvwyrfbexkdtothixw.supabase.co";
-const SUPABASE_KEY = "sb_publishable_SeYFUHZAKA9tvy2IHjZzDw__7T9dReA";
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const SUPABASE_URL="https://juvvwyrfbexkdtothixw.supabase.co";
+const SUPABASE_KEY="sb_publishable_SeYFUHZAKA9tvy2IHjZzDw__7T9dReA";
+
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const labels={sets:"LEGO sets",minifigs:"minifigures",parts:"bricks & parts"};
 const $=s=>document.querySelector(s);
-function showStatus(message,kind=""){const el=$("#status");el.textContent=message;el.className="status "+kind;el.style.display="block";}
-function setType(type){selectedType=type;document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.type===type)));$("#resultsTitle").textContent="Explore "+labels[type];$("#resultsHint").textContent="Search above to load live Rebrickable catalog results.";}
-document.querySelectorAll("[data-type]").forEach(b=>b.addEventListener("click",()=>setType(b.dataset.type)));
-document.querySelectorAll("[data-q]").forEach(b=>b.addEventListener("click",()=>{$("#query").value=b.dataset.q;$("#searchForm").requestSubmit();}));
-async function checkHealth(){try{const r=await fetch("/api/health");const d=await r.json();$("#apiState").textContent=d.rebrickableConfigured?"API key configured":"API setup needed";$("#apiState").style.background=d.rebrickableConfigured?"#e8f5ed":"#fff4d7";$("#apiState").style.color=d.rebrickableConfigured?"#28784b":"#805d00";}catch{$("#apiState").textContent="Server unavailable";}}
-function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 
-function render(items) {
-  const grid = $("#results");
+function showStatus(message,kind=""){
+  const el=$("#status");
+  el.textContent=message;
+  el.className="status "+kind;
+  el.style.display="block";
+}
 
-  if (!items.length) {
-    grid.innerHTML = '<div class="empty">No matching results found. Try another search term.</div>';
+function setType(type){
+  selectedType=type;
+  document.querySelectorAll("[data-type]").forEach(b=>{
+    b.setAttribute("aria-pressed",String(b.dataset.type===type));
+  });
+  $("#resultsTitle").textContent="Explore "+labels[type];
+  $("#resultsHint").textContent="Search above to load live Rebrickable catalog results.";
+}
+
+document.querySelectorAll("[data-type]").forEach(b=>{
+  b.addEventListener("click",()=>setType(b.dataset.type));
+});
+
+document.querySelectorAll("[data-q]").forEach(b=>{
+  b.addEventListener("click",()=>{
+    $("#query").value=b.dataset.q;
+    $("#searchForm").requestSubmit();
+  });
+});
+
+async function checkHealth(){
+  try{
+    const r=await fetch("/api/health");
+    const d=await r.json();
+    $("#apiState").textContent=d.rebrickableConfigured?"API key configured":"API setup needed";
+    $("#apiState").style.background=d.rebrickableConfigured?"#e8f5ed":"#fff4d7";
+    $("#apiState").style.color=d.rebrickableConfigured?"#28784b":"#805d00";
+  }catch{
+    $("#apiState").textContent="Server unavailable";
+  }
+}
+
+function render(items){
+  const grid=$("#results");
+  if(!items.length){
+    grid.innerHTML='<div class="empty">No matching results found. Try another search term.</div>';
     return;
   }
-
   grid.replaceChildren();
 
-  items.forEach(item => {
-    const card = document.createElement("article");
-    card.className = "card";
+  items.forEach(item=>{
+    const card=document.createElement("article");
+    card.className="card";
 
-    const pic = document.createElement("div");
-    pic.className = "pic";
+    const pic=document.createElement("div");
+    pic.className="pic";
 
-    if (item.image) {
-      const img = document.createElement("img");
-      img.loading = "lazy";
-      img.src = item.image;
-      img.alt = item.name || "LEGO catalog item";
+    if(item.image){
+      const img=document.createElement("img");
+      img.loading="lazy";
+      img.src=item.image;
+      img.alt=item.name||"LEGO catalog item";
       pic.appendChild(img);
-    } else {
-      pic.textContent = "🧱";
+    }else{
+      pic.textContent="🧱";
     }
 
-    const body = document.createElement("div");
-    body.className = "body";
+    const body=document.createElement("div");
+    body.className="body";
 
-    const heading = document.createElement("h3");
-    heading.textContent = item.name || "Unnamed LEGO item";
+    const heading=document.createElement("h3");
+    heading.textContent=item.name||"Unnamed LEGO item";
 
-    const meta = document.createElement("div");
-    meta.className = "meta";
-    meta.textContent =
-      (item.year || "Year not listed") +
-      (item.numParts ? " · " + item.numParts + " parts" : "");
+    const meta=document.createElement("div");
+    meta.className="meta";
+    meta.textContent=(item.year||"Year not listed")+(item.numParts?" · "+item.numParts+" parts":"");
 
-    const id = document.createElement("div");
-    id.className = "id";
-    id.textContent = item.id || "Catalog item";
+    const id=document.createElement("div");
+    id.className="id";
+    id.textContent=item.id||"Catalog item";
 
-    body.append(heading, meta, id);
+    body.append(heading,meta,id);
 
-    if (item.url) {
-      const linkWrap = document.createElement("div");
-      linkWrap.style.marginTop = "8px";
-
-      const link = document.createElement("a");
-      link.href = item.url;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.style.cssText = "font-size:11px;color:#245c8e;font-weight:800";
-      link.textContent = "View Rebrickable ↗";
-
-      linkWrap.appendChild(link);
-      body.appendChild(linkWrap);
+    if(item.url){
+      const link=document.createElement("a");
+      link.href=item.url;
+      link.target="_blank";
+      link.rel="noopener noreferrer";
+      link.style.cssText="display:block;margin-top:8px;font-size:11px;color:#245c8e;font-weight:800";
+      link.textContent="View Rebrickable ↗";
+      body.appendChild(link);
     }
 
-    const favoriteButton = document.createElement("button");
-    favoriteButton.type = "button";
-    favoriteButton.className = "tab";
-    favoriteButton.style.marginTop = "10px";
-    favoriteButton.textContent = "❤️ Add to Favorites";
-    favoriteButton.addEventListener("click", () => saveFavorite(item));
-
+    const favoriteButton=document.createElement("button");
+    favoriteButton.type="button";
+    favoriteButton.className="tab";
+    favoriteButton.style.marginTop="10px";
+    favoriteButton.textContent="❤️ Add to Favorites";
+    favoriteButton.addEventListener("click",()=>saveFavorite(item));
     body.appendChild(favoriteButton);
 
-    card.append(pic, body);
+    card.append(pic,body);
     grid.appendChild(card);
   });
 }
 
-$("#searchForm").addEventListener("submit",async e=>{e.preventDefault();const q=$("#query").value.trim();if(!q)return;showStatus("Searching Rebrickable…");$("#results").innerHTML='<div class="empty">Loading catalog results…</div>';$("#resultsHint").textContent=`Searching ${labels[selectedType]} for “${q}”.`;
-try{const response=await fetch(`/api/search?q=${encodeURIComponent(q)}&type=${encodeURIComponent(selectedType)}&page_size=24`);const data=await response.json();if(!response.ok){showStatus(data.error||"Search failed.", "error");$("#results").innerHTML='<div class="empty">Catalog results are not available yet.</div>';return;}render(data.results||[]);showStatus(`${(data.results||[]).length} results shown · ${data.count??0} total catalog matches.`,"good");}catch{showStatus("Could not reach GPBrickSearch. Make sure the server is running.","error");$("#results").innerHTML='<div class="empty">Server connection unavailable.</div>';}});checkHealth();
-  const authForm = document.getElementById("authForm");
-const signupButton = document.getElementById("signupButton");
-const logoutButton = document.getElementById("logoutButton");
-const authMessage = document.getElementById("authMessage");
-const profileEditor = document.getElementById("profileEditor");
-const savedUsername = document.getElementById("savedUsername");
-const profileMessage = document.getElementById("profileMessage");
-const saveUsernameButton = document.getElementById("saveUsernameButton");
-const avatarUpload = document.getElementById("avatarUpload");
-const avatarPreview = document.getElementById("avatarPreview");
-const avatarMessage = document.getElementById("avatarMessage");
-const uploadAvatarButton = document.getElementById("uploadAvatarButton");
+$("#searchForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const q=$("#query").value.trim();
+  if(!q)return;
 
-avatarUpload.addEventListener("change", () => {
-  const file = avatarUpload.files[0];
+  showStatus("Searching Rebrickable…");
+  $("#results").innerHTML='<div class="empty">Loading catalog results…</div>';
+  $("#resultsHint").textContent=`Searching ${labels[selectedType]} for “${q}”.`;
 
-  if (!file) return;
+  try{
+    const response=await fetch(`/api/search?q=${encodeURIComponent(q)}&type=${encodeURIComponent(selectedType)}&page_size=24`);
+    const data=await response.json();
 
-  if (file.size > 2 * 1024 * 1024) {
-    avatarMessage.textContent = "Please choose an image smaller than 2 MB.";
-    avatarUpload.value = "";
-    return;
+    if(!response.ok){
+      showStatus(data.error||"Search failed.","error");
+      $("#results").innerHTML='<div class="empty">Catalog results are not available yet.</div>';
+      return;
+    }
+
+    render(data.results||[]);
+    showStatus(`${(data.results||[]).length} results shown · ${data.count??0} total catalog matches.`,"good");
+  }catch{
+    showStatus("Could not reach GPBrickSearch. Make sure the server is running.","error");
+    $("#results").innerHTML='<div class="empty">Server connection unavailable.</div>';
   }
-
-  avatarPreview.src = URL.createObjectURL(file);
-  avatarPreview.hidden = false;
-  avatarMessage.textContent = "Preview ready!";
 });
 
-uploadAvatarButton.addEventListener("click", async () => {
-  const { data: { session } } = await supabaseClient.auth.getSession();
+checkHealth();
 
-if (!session) {
-  avatarMessage.textContent = "Please log in first.";
-  return;
-}
+const authForm=$("#authForm");
+const signupButton=$("#signupButton");
+const logoutButton=$("#logoutButton");
+const authMessage=$("#authMessage");
+const profileEditor=$("#profileEditor");
+const savedUsername=$("#savedUsername");
+const profileMessage=$("#profileMessage");
+const saveUsernameButton=$("#saveUsernameButton");
+const avatarUpload=$("#avatarUpload");
+const avatarPreview=$("#avatarPreview");
+const avatarMessage=$("#avatarMessage");
+const uploadAvatarButton=$("#uploadAvatarButton");
 
-  const file = avatarUpload.files[0];
+avatarUpload.addEventListener("change",()=>{
+  const file=avatarUpload.files[0];
+  if(!file)return;
 
-  if (!file) {
-    avatarMessage.textContent = "Please choose a picture first.";
+  if(file.size>2*1024*1024){
+    avatarMessage.textContent="Please choose an image smaller than 2 MB.";
+    avatarUpload.value="";
     return;
   }
 
-  const fileExt = file.name.split(".").pop().toLowerCase();
-  const filePath = `${session.user.id}/avatar.${fileExt}`;
-
-  avatarMessage.textContent = "Uploading picture...";
-
-  const { error } = await supabaseClient.storage
-    .from("avatars")
-    .upload(filePath, file, {
-      upsert: true,
-      contentType: file.type
-    });
-
-  if (error) {
-    avatarMessage.textContent = "Upload failed: " + error.message;
-    return;
-  }
-
-  const { data } = supabaseClient.storage
-    .from("avatars")
-    .getPublicUrl(filePath);
-
-  const { error: profileError } = await supabaseClient
-    .from("profiles")
-    .update({ avatar_url: data.publicUrl })
-    .eq("id", session.user.id);
-
-  if (profileError) {
-    avatarMessage.textContent = "Picture uploaded, but profile update failed: " + profileError.message;
-    return;
-  }
-
-  avatarMessage.textContent = "Profile picture uploaded successfully! 🎉";
+  avatarPreview.src=URL.createObjectURL(file);
+  avatarPreview.hidden=false;
+  avatarMessage.textContent="Preview ready!";
 });
-saveUsernameButton.addEventListener("click", async () => {
-  const { data: { session } } = await supabaseClient.auth.getSession();
 
-  if (!session) {
-    profileMessage.textContent = "Please log in first.";
+uploadAvatarButton.addEventListener("click",async()=>{
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){
+    avatarMessage.textContent="Please log in first.";
     return;
   }
 
-  const username = savedUsername.value.trim();
-
-  if (!username) {
-    profileMessage.textContent = "Please enter a username.";
+  const file=avatarUpload.files[0];
+  if(!file){
+    avatarMessage.textContent="Please choose a picture first.";
     return;
   }
 
-  const { error } = await supabaseClient
-    .from("profiles")
-    .upsert({
-      id: session.user.id,
-      username: username
-    });
+  const fileExt=file.name.split(".").pop().toLowerCase();
+  const filePath=`${session.user.id}/avatar.${fileExt}`;
+  avatarMessage.textContent="Uploading picture...";
 
-  profileMessage.textContent = error
-    ? "Could not save username: " + error.message
-    : "Username saved successfully! 🎉";
-});
-authForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const email = document.getElementById("authEmail").value;
-  const password = document.getElementById("authPassword").value;
-
-  const { error } = await supabaseClient.auth.signInWithPassword({
-    email,
-    password
+  const {error}=await supabaseClient.storage.from("avatars").upload(filePath,file,{
+    upsert:true,
+    contentType:file.type
   });
 
-  authMessage.textContent = error
-    ? error.message
-    : "You are now logged in!";
-});
-
-signupButton.addEventListener("click", async () => {
-const email = document.getElementById("authEmail").value;
-const password = document.getElementById("authPassword").value;
-const username = document.getElementById("profileUsername").value.trim();
-
-if (!email || password.length < 6 || !username) {
-authMessage.textContent = "Enter an email, a username, and a password with at least 6 characters.";    return;
+  if(error){
+    avatarMessage.textContent="Upload failed: "+error.message;
+    return;
   }
 
-const { error } = await supabaseClient.auth.signUp({
-  email,
-  password,
-  options: {
-    data: {
-      username: username
-    }
+  const {data}=supabaseClient.storage.from("avatars").getPublicUrl(filePath);
+  const {error:profileError}=await supabaseClient.from("profiles")
+    .update({avatar_url:data.publicUrl})
+    .eq("id",session.user.id);
+
+  if(profileError){
+    avatarMessage.textContent="Picture uploaded, but profile update failed: "+profileError.message;
+    return;
   }
+
+  avatarMessage.textContent="Profile picture uploaded successfully! 🎉";
+  await updateProfileUI(session);
 });
 
-  authMessage.textContent = error
-    ? error.message
-    : "Account created! Check your email if confirmation is required.";
+saveUsernameButton.addEventListener("click",async()=>{
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){
+    profileMessage.textContent="Please log in first.";
+    return;
+  }
+
+  const username=savedUsername.value.trim();
+  if(!username){
+    profileMessage.textContent="Please enter a username.";
+    return;
+  }
+
+  const {error}=await supabaseClient.from("profiles").upsert({
+    id:session.user.id,
+    username
+  });
+
+  profileMessage.textContent=error
+    ?"Could not save username: "+error.message
+    :"Username saved successfully! 🎉";
+
+  if(!error)await loadForum();
 });
 
-logoutButton.addEventListener("click", async () => {
-  const { error } = await supabaseClient.auth.signOut();
-  authMessage.textContent = error ? error.message : "You are logged out.";
+authForm.addEventListener("submit",async event=>{
+  event.preventDefault();
+  const email=$("#authEmail").value;
+  const password=$("#authPassword").value;
+
+  const {error}=await supabaseClient.auth.signInWithPassword({email,password});
+  authMessage.textContent=error?error.message:"You are now logged in!";
 });
 
-async function updateCollectionUI(session) {
-  const loggedOut = document.getElementById("collectionLoggedOut");
-  const dashboard = document.getElementById("collectionDashboard");
+signupButton.addEventListener("click",async()=>{
+  const email=$("#authEmail").value;
+  const password=$("#authPassword").value;
+  const username=$("#profileUsername").value.trim();
 
-  loggedOut.hidden = Boolean(session);
-  dashboard.hidden = !session;
+  if(!email||password.length<6||!username){
+    authMessage.textContent="Enter an email, a username, and a password with at least 6 characters.";
+    return;
+  }
 
-  if (session) {
-  await loadCollection(session.user.id);
-  await loadFavorites(session.user.id);
+  const {error}=await supabaseClient.auth.signUp({
+    email,
+    password,
+    options:{data:{username}}
+  });
+
+  authMessage.textContent=error
+    ?error.message
+    :"Account created! Check your email if confirmation is required.";
+});
+
+logoutButton.addEventListener("click",async()=>{
+  const {error}=await supabaseClient.auth.signOut();
+  authMessage.textContent=error?error.message:"You are logged out.";
+});
+
+async function updateCollectionUI(session){
+  $("#collectionLoggedOut").hidden=Boolean(session);
+  $("#collectionDashboard").hidden=!session;
+
+  if(session){
+    await loadCollection(session.user.id);
+    await loadFavorites(session.user.id);
+  }
 }
-}
 
-async function loadCollection(userId) {
-  const itemsDiv = document.getElementById("collectionItems");
-  itemsDiv.textContent = "Loading your collection...";
+async function loadCollection(userId){
+  const itemsDiv=$("#collectionItems");
+  itemsDiv.textContent="Loading your collection...";
 
-  const { data, error } = await supabaseClient
-    .from("collection")
+  const {data,error}=await supabaseClient.from("collection")
     .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+    .eq("user_id",userId)
+    .order("created_at",{ascending:false});
 
-  if (error) {
-    itemsDiv.textContent = "Could not load collection: " + error.message;
+  if(error){
+    itemsDiv.textContent="Could not load collection: "+error.message;
     return;
   }
 
-   itemsDiv.replaceChildren();
+  itemsDiv.replaceChildren();
 
-  const totalValue = (data || []).reduce((total, item) => {
-    return total + (Number(item.estimated_value) || 0) * (Number(item.quantity) || 1);
-  }, 0);
+  const totalValue=(data||[]).reduce((total,item)=>{
+    return total+(Number(item.estimated_value)||0)*(Number(item.quantity)||1);
+  },0);
 
-  document.getElementById("collectionTotal").textContent =
-    "$" + totalValue.toFixed(2);
+  $("#collectionTotal").textContent="$"+totalValue.toFixed(2);
 
-  if (!data || data.length === 0) {
-    itemsDiv.textContent = "Your collection is empty. Add your first LEGO item!";
+  if(!data||data.length===0){
+    itemsDiv.textContent="Your collection is empty. Add your first LEGO item!";
     return;
   }
 
-  data.forEach(item => {
-    const card = document.createElement("div");
-    card.style.cssText = "padding:12px;border:1px solid #e2e7ed;border-radius:10px;margin:10px 0";
+  data.forEach(item=>{
+    const card=document.createElement("div");
+    const name=document.createElement("strong");
+    name.textContent=item.item_name;
 
-    const name = document.createElement("strong");
-    name.textContent = item.item_name;
+    const details=document.createElement("p");
+    details.textContent=item.item_type+" · ID: "+item.item_id+
+      " · Quantity: "+item.quantity+" · Condition: "+item.item_condition;
 
-    const details = document.createElement("p");
-    details.textContent =
-      item.item_type + " · ID: " + item.item_id +
-      " · Quantity: " + item.quantity +
-      " · Condition: " + item.item_condition;
+    const notes=document.createElement("p");
+    notes.textContent=item.notes||"";
 
-    const notes = document.createElement("p");
-    notes.textContent = item.notes || "";
-const value = document.createElement("p");
-value.textContent = item.estimated_value !== null && item.estimated_value !== undefined
-  ? "Estimated Value: $" + Number(item.estimated_value).toFixed(2)
-  : "Estimated Value: Not entered";
-    const remove = document.createElement("button");
-    remove.type = "button";
-    remove.textContent = "Remove";
-    remove.addEventListener("click", async () => {
-      const { error } = await supabaseClient
-        .from("collection")
-        .delete()
-        .eq("id", item.id)
-        .eq("user_id", userId);
+    const value=document.createElement("p");
+    value.textContent=item.estimated_value!==null&&item.estimated_value!==undefined
+      ?"Estimated Value: $"+Number(item.estimated_value).toFixed(2)
+      :"Estimated Value: Not entered";
 
-      if (error) {
-        alert("Could not remove item: " + error.message);
-      } else {
-        loadCollection(userId);
-      }
+    const remove=document.createElement("button");
+    remove.type="button";
+    remove.textContent="Remove";
+    remove.addEventListener("click",async()=>{
+      const {error}=await supabaseClient.from("collection").delete()
+        .eq("id",item.id).eq("user_id",userId);
+
+      if(error)alert("Could not remove item: "+error.message);
+      else await loadCollection(userId);
     });
 
-    card.append(name, details, notes, value, remove);
+    card.append(name,details,notes,value,remove);
     itemsDiv.appendChild(card);
   });
 }
 
-async function loadFavorites(userId) {
-  const favoritesDiv = document.getElementById("favoriteItems");
-  if (!favoritesDiv) return;
+async function loadFavorites(userId){
+  const favoritesDiv=$("#favoriteItems");
+  if(!favoritesDiv)return;
 
-  favoritesDiv.textContent = "Loading your favorites...";
+  favoritesDiv.textContent="Loading your favorites...";
 
-  const { data, error } = await supabaseClient
-    .from("favorites")
+  const {data,error}=await supabaseClient.from("favorites")
     .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+    .eq("user_id",userId)
+    .order("created_at",{ascending:false});
 
-  if (error) {
-    favoritesDiv.textContent = "Could not load favorites: " + error.message;
+  if(error){
+    favoritesDiv.textContent="Could not load favorites: "+error.message;
     return;
   }
 
   favoritesDiv.replaceChildren();
 
-  if (!data || data.length === 0) {
-    favoritesDiv.textContent = "You haven't saved any favorites yet.";
+  if(!data||data.length===0){
+    favoritesDiv.textContent="You haven't saved any favorites yet.";
     return;
   }
 
-  data.forEach(item => {
-    const card = document.createElement("div");
-    card.style.cssText = "padding:12px;border:1px solid #e2e7ed;border-radius:10px;margin:10px 0";
+  data.forEach(item=>{
+    const card=document.createElement("div");
+    const name=document.createElement("strong");
+    name.textContent=item.item_name;
 
-    const name = document.createElement("strong");
-    name.textContent = item.item_name;
+    const details=document.createElement("p");
+    details.textContent=item.item_type+" · ID: "+item.item_id;
 
-    const details = document.createElement("p");
-    details.textContent = item.item_type + " · ID: " + item.item_id;
+    const remove=document.createElement("button");
+    remove.type="button";
+    remove.textContent="Remove from Favorites";
 
-    const remove = document.createElement("button");
-    remove.type = "button";
-    remove.textContent = "Remove from Favorites";
+    remove.addEventListener("click",async()=>{
+      const {error}=await supabaseClient.from("favorites").delete()
+        .eq("id",item.id).eq("user_id",userId);
 
-    remove.addEventListener("click", async () => {
-      const { error } = await supabaseClient
-        .from("favorites")
-        .delete()
-        .eq("id", item.id)
-        .eq("user_id", userId);
-
-      if (error) {
-        alert("Could not remove favorite: " + error.message);
-      } else {
-        loadFavorites(userId);
-      }
+      if(error)alert("Could not remove favorite: "+error.message);
+      else await loadFavorites(userId);
     });
 
-    card.append(name, details, remove);
+    card.append(name,details,remove);
     favoritesDiv.appendChild(card);
   });
 }
 
-async function saveFavorite(item) {
-  const { data: { session } } = await supabaseClient.auth.getSession();
+async function saveFavorite(item){
+  const {data:{session}}=await supabaseClient.auth.getSession();
 
-  if (!session) {
+  if(!session){
     alert("Please log in to save favorites.");
     return;
   }
 
-  const { error } = await supabaseClient
-    .from("favorites")
-    .insert({
-      user_id: session.user.id,
-      item_type: item.category,
-      item_id: String(item.id),
-      item_name: item.name,
-      image_url: item.image || null
-    });
+  const {error}=await supabaseClient.from("favorites").insert({
+    user_id:session.user.id,
+    item_type:item.category,
+    item_id:String(item.id),
+    item_name:item.name,
+    image_url:item.image||null
+  });
 
-  if (error) {
-    alert(error.code === "23505"
-      ? "This item is already in your favorites!"
-      : "Could not save favorite: " + error.message);
+  if(error){
+    alert(error.code==="23505"
+      ?"This item is already in your favorites!"
+      :"Could not save favorite: "+error.message);
     return;
   }
 
   alert("Added to your favorites!");
-  loadFavorites(session.user.id);
+  await loadFavorites(session.user.id);
 }
 
-
-document.getElementById("collectionForm").addEventListener("submit", async event => {
+$("#collectionForm").addEventListener("submit",async event=>{
   event.preventDefault();
 
-  const { data: { session } } = await supabaseClient.auth.getSession();
-
-  if (!session) {
-    document.getElementById("collectionMessage").textContent =
-      "Please log in first.";
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  if(!session){
+    $("#collectionMessage").textContent="Please log in first.";
     return;
   }
 
-  const newItem = {
-    user_id: session.user.id,
-    item_type: document.getElementById("collectionType").value,
-    item_id: document.getElementById("collectionId").value.trim(),
-    item_name: document.getElementById("collectionName").value.trim(),
-    quantity: Number(document.getElementById("collectionQuantity").value),
-    item_condition: document.getElementById("collectionCondition").value,
-       notes: document.getElementById("collectionNotes").value.trim(),
-    estimated_value: document.getElementById("collectionValue").value
-      ? Number(document.getElementById("collectionValue").value)
-      : null,
-    value_updated_at: document.getElementById("collectionValue").value
-      ? new Date().toISOString()
-      : null
+  const newItem={
+    user_id:session.user.id,
+    item_type:$("#collectionType").value,
+    item_id:$("#collectionId").value.trim(),
+    item_name:$("#collectionName").value.trim(),
+    quantity:Number($("#collectionQuantity").value),
+    item_condition:$("#collectionCondition").value,
+    notes:$("#collectionNotes").value.trim(),
+    estimated_value:$("#collectionValue").value?Number($("#collectionValue").value):null,
+    value_updated_at:$("#collectionValue").value?new Date().toISOString():null
   };
 
-  const { error } = await supabaseClient
-    .from("collection")
-    .insert(newItem);
+  const {error}=await supabaseClient.from("collection").insert(newItem);
 
-  const message = document.getElementById("collectionMessage");
-
-  if (error) {
-    message.textContent = "Could not add item: " + error.message;
+  if(error){
+    $("#collectionMessage").textContent="Could not add item: "+error.message;
     return;
   }
 
-  message.textContent = "LEGO item successfully added!";
+  $("#collectionMessage").textContent="LEGO item successfully added!";
   event.target.reset();
-  document.getElementById("collectionQuantity").value = 1;
-
+  $("#collectionQuantity").value=1;
   await loadCollection(session.user.id);
 });
 
-async function loadForum() {
-  const feed = document.getElementById("forumFeed");
-  const sort = document.getElementById("forumSort").value;
+async function loadForum(){
+  const feed=$("#forumFeed");
+  const sort=$("#forumSort").value;
+  feed.textContent="Loading discussions...";
 
-  feed.textContent = "Loading discussions...";
-const { data: { session } } = await supabaseClient.auth.getSession();
-  const { data: posts, error } = await supabaseClient
-    .from("forum_posts")
+  const {data:{session}}=await supabaseClient.auth.getSession();
+
+  const {data:posts,error}=await supabaseClient.from("forum_posts")
     .select("*")
-    .order("created_at", { ascending: false });
+    .order("created_at",{ascending:false});
 
-  if (error) {
-    feed.textContent = "Could not load discussions: " + error.message;
+  if(error){
+    feed.textContent="Could not load discussions: "+error.message;
     return;
   }
 
-  if (!posts || posts.length === 0) {
-    feed.textContent = "No discussions yet. Be the first to start one!";
-    return;
-  }
-const { data: comments, error: commentsError } = await supabaseClient
-  .from("forum_comments")
-  .select("*")
-  .order("created_at", { ascending: true });
-
-if (commentsError) {
-  feed.textContent = "Could not load comments: " + commentsError.message;
-  return;
-}
-const forumUserIds = [...new Set([
-  ...(posts || []).map(post => post.user_id),
-  ...(comments || []).map(comment => comment.user_id)
-])];
-
-let commentProfiles = [];
-
-if (forumUserIds.length) {
-  const { data: profiles, error: profileError } = await supabaseClient
-    .from("profiles")
-    .select("id, username, avatar_url")
-    .in("id", forumUserIds);
-
-  if (profileError) {
-    feed.textContent = "Could not load user profiles: " + profileError.message;
+  if(!posts||posts.length===0){
+    feed.textContent="No discussions yet. Be the first to start one!";
     return;
   }
 
-  commentProfiles = profiles || [];
-}
+  const {data:comments,error:commentsError}=await supabaseClient.from("forum_comments")
+    .select("*")
+    .order("created_at",{ascending:true});
 
-const profileById = Object.fromEntries(
-  commentProfiles.map(profile => [profile.id, profile])
-);
-  const { data: votes, error: voteError } = await supabaseClient
-    .from("forum_votes")
+  if(commentsError){
+    feed.textContent="Could not load comments: "+commentsError.message;
+    return;
+  }
+
+  const forumUserIds=[...new Set([
+    ...(posts||[]).map(post=>post.user_id),
+    ...(comments||[]).map(comment=>comment.user_id)
+  ])];
+
+  let commentProfiles=[];
+
+  if(forumUserIds.length){
+    const {data:profiles,error:profileError}=await supabaseClient.from("profiles")
+      .select("id, username, avatar_url")
+      .in("id",forumUserIds);
+
+    if(profileError){
+      feed.textContent="Could not load user profiles: "+profileError.message;
+      return;
+    }
+
+    commentProfiles=profiles||[];
+  }
+
+  const profileById=Object.fromEntries(commentProfiles.map(profile=>[profile.id,profile]));
+
+  const {data:votes,error:voteError}=await supabaseClient.from("forum_votes")
     .select("post_id, vote");
 
-  if (voteError) {
-    feed.textContent = "Could not load votes: " + voteError.message;
+  if(voteError){
+    feed.textContent="Could not load votes: "+voteError.message;
     return;
   }
 
-  const scores = {};
-  (votes || []).forEach(vote => {
-    scores[vote.post_id] = (scores[vote.post_id] || 0) + vote.vote;
+  const scores={};
+  (votes||[]).forEach(vote=>{
+    scores[vote.post_id]=(scores[vote.post_id]||0)+vote.vote;
   });
 
-  if (sort === "top") {
-    posts.sort((a, b) =>
-      (scores[b.id] || 0) - (scores[a.id] || 0)
-    );
+  if(sort==="top"){
+    posts.sort((a,b)=>(scores[b.id]||0)-(scores[a.id]||0));
   }
 
   feed.replaceChildren();
 
-  posts.forEach(post => {
-    const card = document.createElement("article");
-    card.style.cssText =
-      "padding:18px;border:1px solid #e2e7ed;border-radius:12px;margin:12px 0;background:white";
+  posts.forEach(post=>{
+    const card=document.createElement("article");
 
-    const category = document.createElement("div");
-    category.textContent = post.category;
-    category.style.cssText =
-      "font-size:11px;font-weight:900;color:#b51f27;text-transform:uppercase";
-const postProfile = profileById[post.user_id];
+    const category=document.createElement("div");
+    category.textContent=post.category;
+    category.style.cssText="font-size:11px;font-weight:900;color:#b51f27;text-transform:uppercase";
 
-const postAuthorRow = document.createElement("div");
-postAuthorRow.style.cssText =
-  "display:flex;align-items:center;gap:9px;margin:10px 0";
+    const postProfile=profileById[post.user_id];
+    const postAuthorRow=document.createElement("div");
+    postAuthorRow.style.cssText="display:flex;align-items:center;gap:9px;margin:10px 0";
 
-const postUsername = document.createElement("strong");
-postUsername.textContent = postProfile?.username || "LEGO Member";
-postUsername.style.fontSize = "13px";
+    const postUsername=document.createElement("strong");
+    postUsername.textContent=postProfile?.username||"LEGO Member";
+    postUsername.style.fontSize="13px";
 
-if (postProfile?.avatar_url) {
-  const postAvatar = document.createElement("img");
-  postAvatar.src = postProfile.avatar_url;
-  postAvatar.alt = "";
-  postAvatar.style.cssText =
-    "width:40px;height:40px;border-radius:50%;object-fit:cover;background:#dce4ec";
+    if(postProfile?.avatar_url){
+      const postAvatar=document.createElement("img");
+      postAvatar.src=postProfile.avatar_url;
+      postAvatar.alt="";
+      postAvatar.style.cssText="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#dce4ec";
+      postAuthorRow.append(postAvatar,postUsername);
+    }else{
+      const fallback=document.createElement("div");
+      fallback.textContent=(postProfile?.username||"L").charAt(0).toUpperCase();
+      fallback.style.cssText="width:40px;height:40px;border-radius:50%;background:#142335;color:white;display:grid;place-items:center;font-weight:900";
+      postAuthorRow.append(fallback,postUsername);
+    }
 
-  postAuthorRow.append(postAvatar, postUsername);
-} else {
-  const postFallbackAvatar = document.createElement("div");
-  postFallbackAvatar.textContent =
-    (postProfile?.username || "L").charAt(0).toUpperCase();
-  postFallbackAvatar.style.cssText =
-    "width:40px;height:40px;border-radius:50%;background:#142335;color:white;display:grid;place-items:center;font-weight:900";
+    const title=document.createElement("h3");
+    title.textContent=post.title;
 
-  postAuthorRow.append(postFallbackAvatar, postUsername);
-}
-    const title = document.createElement("h3");
-    title.textContent = post.title;
+    const body=document.createElement("p");
+    body.textContent=post.body;
 
-    const body = document.createElement("p");
-    body.textContent = post.body;
+    const date=document.createElement("small");
+    date.textContent=new Date(post.created_at).toLocaleString();
+    date.style.color="#667587";
 
-    const date = document.createElement("small");
-    date.textContent = new Date(post.created_at).toLocaleString();
-    date.style.color = "#667587";
+    const voteArea=document.createElement("div");
+    voteArea.style.cssText="display:flex;align-items:center;gap:10px;margin-top:14px";
 
-const voteArea = document.createElement("div");
-voteArea.style.cssText = "display:flex;align-items:center;gap:10px;margin-top:14px";
+    const upvote=document.createElement("button");
+    upvote.textContent="▲ Upvote";
+    upvote.className="tab";
 
-const upvote = document.createElement("button");
-upvote.textContent = "▲ Upvote";
-upvote.className = "tab";
+    const score=document.createElement("strong");
+    score.textContent=scores[post.id]||0;
 
-const score = document.createElement("strong");
-score.textContent = scores[post.id] || 0;
+    const downvote=document.createElement("button");
+    downvote.textContent="▼ Downvote";
+    downvote.className="tab";
 
-const downvote = document.createElement("button");
-downvote.textContent = "▼ Downvote";
-downvote.className = "tab";
+    upvote.addEventListener("click",()=>voteOnPost(post.id,1));
+    downvote.addEventListener("click",()=>voteOnPost(post.id,-1));
+    voteArea.append(upvote,score,downvote);
 
-upvote.addEventListener("click", () => voteOnPost(post.id, 1));
-downvote.addEventListener("click", () => voteOnPost(post.id, -1));
+    const commentsArea=document.createElement("div");
+    commentsArea.style.cssText="margin-top:18px;padding-top:14px;border-top:1px solid #e2e7ed";
 
-voteArea.append(upvote, score, downvote);
+    const commentsTitle=document.createElement("strong");
+    commentsTitle.textContent="💬 Comments";
 
-const commentsArea = document.createElement("div");
-commentsArea.style.cssText = "margin-top:18px;padding-top:14px;border-top:1px solid #e2e7ed";
+    const commentsList=document.createElement("div");
+    commentsList.style.marginTop="10px";
 
-const commentsTitle = document.createElement("strong");
-commentsTitle.textContent = "💬 Comments";
+    const postComments=(comments||[]).filter(comment=>comment.post_id===post.id);
 
-const commentsList = document.createElement("div");
-commentsList.style.marginTop = "10px";
+    if(postComments.length===0){
+      commentsList.textContent="No comments yet. Be the first to comment!";
+    }else{
+      postComments.forEach(comment=>{
+        const commentCard=document.createElement("div");
+        commentCard.style.cssText="padding:10px;background:#f5f7f9;border-radius:8px;margin:8px 0";
 
-const postComments = (comments || []).filter(
-  comment => comment.post_id === post.id
-);
+        const profile=profileById[comment.user_id];
+        const authorRow=document.createElement("div");
+        authorRow.style.cssText="display:flex;align-items:center;gap:9px;margin-bottom:8px";
 
-if (postComments.length === 0) {
-  commentsList.textContent = "No comments yet. Be the first to comment!";
-} else {
-  postComments.forEach(comment => {
-    const commentCard = document.createElement("div");
-    commentCard.style.cssText =
-      "padding:10px;background:#f5f7f9;border-radius:8px;margin:8px 0";
+        const username=document.createElement("strong");
+        username.textContent=profile?.username||"LEGO Member";
+        username.style.fontSize="13px";
 
-const profile = profileById[comment.user_id];
+        if(profile?.avatar_url){
+          const avatar=document.createElement("img");
+          avatar.src=profile.avatar_url;
+          avatar.alt="";
+          avatar.style.cssText="width:36px;height:36px;border-radius:50%;object-fit:cover;background:#dce4ec";
+          authorRow.append(avatar,username);
+        }else{
+          const fallback=document.createElement("div");
+          fallback.textContent=(profile?.username||"L").charAt(0).toUpperCase();
+          fallback.style.cssText="width:36px;height:36px;border-radius:50%;background:#142335;color:white;display:grid;place-items:center;font-weight:900";
+          authorRow.append(fallback,username);
+        }
 
-const authorRow = document.createElement("div");
-authorRow.style.cssText =
-  "display:flex;align-items:center;gap:9px;margin-bottom:8px";
+        const commentBody=document.createElement("p");
+        commentBody.textContent=comment.body;
+        commentBody.style.margin="0";
 
-const username = document.createElement("strong");
-username.textContent = profile?.username || "LEGO Member";
-username.style.fontSize = "13px";
+        const commentDate=document.createElement("small");
+        commentDate.textContent=new Date(comment.created_at).toLocaleString();
+        commentDate.style.color="#667587";
 
-if (profile?.avatar_url) {
-  const avatar = document.createElement("img");
-  avatar.src = profile.avatar_url;
-  avatar.alt = "";
-  avatar.style.cssText =
-    "width:36px;height:36px;border-radius:50%;object-fit:cover;background:#dce4ec";
+        commentCard.append(authorRow,commentBody,commentDate);
+        commentsList.appendChild(commentCard);
+      });
+    }
 
-  authorRow.append(avatar, username);
-} else {
-  const fallbackAvatar = document.createElement("div");
-  fallbackAvatar.textContent =
-    (profile?.username || "L").charAt(0).toUpperCase();
-  fallbackAvatar.style.cssText =
-    "width:36px;height:36px;border-radius:50%;background:#142335;color:white;display:grid;place-items:center;font-weight:900";
+    commentsArea.append(commentsTitle,commentsList);
 
-  authorRow.append(fallbackAvatar, username);
-}
-const commentBody = document.createElement("p");
-commentBody.textContent = comment.body;
-commentBody.style.margin = "0";
+    if(session){
+      const commentForm=document.createElement("form");
+      commentForm.style.cssText="display:flex;gap:8px;margin-top:12px";
 
-const commentDate = document.createElement("small");
-commentDate.textContent = new Date(comment.created_at).toLocaleString();
-commentDate.style.color = "#667587";
+      const commentInput=document.createElement("input");
+      commentInput.type="text";
+      commentInput.placeholder="Write a comment...";
+      commentInput.maxLength=5000;
+      commentInput.required=true;
+      commentInput.style.cssText="flex:1;min-width:0;padding:10px;border:1px solid #e2e7ed;border-radius:8px";
 
-commentCard.append(authorRow, commentBody, commentDate);
-    commentsList.appendChild(commentCard);
-  });
-}
+      const commentButton=document.createElement("button");
+      commentButton.type="submit";
+      commentButton.className="primary";
+      commentButton.textContent="Comment";
+      commentButton.style.padding="10px 14px";
 
-commentsArea.append(commentsTitle, commentsList);
-if (session) {
-  const commentForm = document.createElement("form");
-  commentForm.style.cssText = "display:flex;gap:8px;margin-top:12px";
+      commentForm.append(commentInput,commentButton);
+      commentForm.addEventListener("submit",async event=>{
+        event.preventDefault();
+        await addForumComment(post.id,commentInput.value);
+      });
 
-  const commentInput = document.createElement("input");
-  commentInput.type = "text";
-  commentInput.placeholder = "Write a comment...";
-  commentInput.maxLength = 5000;
-  commentInput.required = true;
-  commentInput.style.cssText = "flex:1;min-width:0;padding:10px;border:1px solid #e2e7ed;border-radius:8px";
+      commentsArea.appendChild(commentForm);
+    }
 
-  const commentButton = document.createElement("button");
-  commentButton.type = "submit";
-  commentButton.className = "primary";
-  commentButton.textContent = "Comment";
-  commentButton.style.padding = "10px 14px";
-
-  commentForm.append(commentInput, commentButton);
-  commentForm.addEventListener("submit", async event => {
-    event.preventDefault();
-    await addForumComment(post.id, commentInput.value);
-  });
-
-  commentsArea.appendChild(commentForm);
-}
-card.append(category, postAuthorRow, title, body, date, voteArea, commentsArea);
+    card.append(category,postAuthorRow,title,body,date,voteArea,commentsArea);
     feed.appendChild(card);
   });
 }
 
-document.getElementById("forumSort").addEventListener("change", loadForum);
-async function voteOnPost(postId, voteValue) {
-  const { data: { session } } = await supabaseClient.auth.getSession();
+$("#forumSort").addEventListener("change",loadForum);
 
-  if (!session) {
+async function voteOnPost(postId,voteValue){
+  const {data:{session}}=await supabaseClient.auth.getSession();
+
+  if(!session){
     alert("Please log in to vote!");
     return;
   }
 
-  const { error: deleteError } = await supabaseClient
-    .from("forum_votes")
-    .delete()
-    .eq("post_id", postId)
-    .eq("user_id", session.user.id);
+  const {error:deleteError}=await supabaseClient.from("forum_votes").delete()
+    .eq("post_id",postId).eq("user_id",session.user.id);
 
-  if (deleteError) {
-    alert("Could not update your vote: " + deleteError.message);
+  if(deleteError){
+    alert("Could not update your vote: "+deleteError.message);
     return;
   }
 
-  const { error: insertError } = await supabaseClient
-    .from("forum_votes")
-    .insert({
-      post_id: postId,
-      user_id: session.user.id,
-      vote: voteValue
-    });
+  const {error:insertError}=await supabaseClient.from("forum_votes").insert({
+    post_id:postId,
+    user_id:session.user.id,
+    vote:voteValue
+  });
 
-  if (insertError) {
-    alert("Could not save your vote: " + insertError.message);
+  if(insertError){
+    alert("Could not save your vote: "+insertError.message);
     return;
   }
 
   await loadForum();
 }
-async function createForumPost(event) {
+
+async function createForumPost(event){
   event.preventDefault();
 
-  const message = document.getElementById("forumMessage");
-  const { data: { session } } = await supabaseClient.auth.getSession();
+  const message=$("#forumMessage");
+  const {data:{session}}=await supabaseClient.auth.getSession();
 
-  if (!session) {
-    message.textContent = "Please log in to publish a discussion.";
+  if(!session){
+    message.textContent="Please log in to publish a discussion.";
     return;
   }
 
-  const title = document.getElementById("forumTitle").value.trim();
-  const body = document.getElementById("forumBody").value.trim();
-  const category = document.getElementById("forumCategory").value;
+  const title=$("#forumTitle").value.trim();
+  const body=$("#forumBody").value.trim();
+  const category=$("#forumCategory").value;
 
-  message.textContent = "Publishing your discussion...";
+  message.textContent="Publishing your discussion...";
 
-  const { error } = await supabaseClient
-    .from("forum_posts")
-    .insert({
-      user_id: session.user.id,
-      title,
-      body,
-      category
-    });
+  const {error}=await supabaseClient.from("forum_posts").insert({
+    user_id:session.user.id,
+    title,
+    body,
+    category
+  });
 
-  if (error) {
-    message.textContent = "Could not publish: " + error.message;
+  if(error){
+    message.textContent="Could not publish: "+error.message;
     return;
   }
 
-  message.textContent = "Your discussion has been published!";
-  document.getElementById("forumPostForm").reset();
-
+  message.textContent="Your discussion has been published!";
+  $("#forumPostForm").reset();
   await loadForum();
 }
-  
-  async function addForumComment(postId, body) {
-  const { data: { session } } = await supabaseClient.auth.getSession();
 
-  if (!session) {
+async function addForumComment(postId,body){
+  const {data:{session}}=await supabaseClient.auth.getSession();
+
+  if(!session){
     alert("Please log in to comment!");
     return;
   }
 
-  const commentText = body.trim();
-
-  if (!commentText) {
+  const commentText=body.trim();
+  if(!commentText){
     alert("Please write a comment first.");
     return;
   }
 
-  const { error } = await supabaseClient
-    .from("forum_comments")
-    .insert({
-      post_id: postId,
-      user_id: session.user.id,
-      body: commentText
-    });
+  const {error}=await supabaseClient.from("forum_comments").insert({
+    post_id:postId,
+    user_id:session.user.id,
+    body:commentText
+  });
 
-  if (error) {
-    alert("Could not post comment: " + error.message);
+  if(error){
+    alert("Could not post comment: "+error.message);
     return;
   }
 
   await loadForum();
 }
 
-document.getElementById("forumPostForm")
-  .addEventListener("submit", createForumPost);
-async function updateProfileUI(session) {
-  const profileEditor = document.getElementById("profileEditor");
-  const savedUsername = document.getElementById("savedUsername");
-const avatarPreview = document.getElementById("avatarPreview");
-  profileEditor.hidden = !session;
+$("#forumPostForm").addEventListener("submit",createForumPost);
 
-if (!session) {
-  savedUsername.value = "";
-  avatarPreview.hidden = true;
-  avatarPreview.removeAttribute("src");
-  return;
-}
+async function updateProfileUI(session){
+  profileEditor.hidden=!session;
 
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("username, avatar_url")
-    .eq("id", session.user.id)
-    .single();
-
-  if (error) {
-    document.getElementById("profileMessage").textContent =
-      "Could not load profile: " + error.message;
+  if(!session){
+    savedUsername.value="";
+    avatarPreview.hidden=true;
+    avatarPreview.removeAttribute("src");
     return;
   }
 
-  savedUsername.value = data.username || "";
-  if (data.avatar_url) {
-  avatarPreview.src = data.avatar_url + "?t=" + Date.now();
-  avatarPreview.hidden = false;
-} else {
-  avatarPreview.hidden = true;
-  avatarPreview.removeAttribute("src");
+  const {data,error}=await supabaseClient.from("profiles")
+    .select("username, avatar_url")
+    .eq("id",session.user.id)
+    .single();
+
+  if(error){
+    $("#profileMessage").textContent="Could not load profile: "+error.message;
+    return;
+  }
+
+  savedUsername.value=data.username||"";
+
+  if(data.avatar_url){
+    avatarPreview.src=data.avatar_url+"?t="+Date.now();
+    avatarPreview.hidden=false;
+  }else{
+    avatarPreview.hidden=true;
+    avatarPreview.removeAttribute("src");
+  }
 }
-}
-supabaseClient.auth.onAuthStateChange((_event, session) => {
-  logoutButton.hidden = !session;
+
+function updateAuthUI(session){
+  logoutButton.hidden=!session;
+  $("#forumLoggedOut").hidden=Boolean(session);
+  $("#forumComposer").hidden=!session;
   updateProfileUI(session);
-  document.getElementById("forumLoggedOut").hidden = Boolean(session);
-  document.getElementById("forumComposer").hidden = !session;
-
-  setTimeout(() => {
-    updateCollectionUI(session);
-    loadForum();
-  }, 0);
-});
-
-supabaseClient.auth.getSession().then(({ data: { session } }) => {
-  logoutButton.hidden = !session;
-  updateProfileUI(session);
-  document.getElementById("forumLoggedOut").hidden = Boolean(session);
-  document.getElementById("forumComposer").hidden = !session;
-
   updateCollectionUI(session);
   loadForum();
+}
+
+supabaseClient.auth.onAuthStateChange((_event,session)=>{
+  setTimeout(()=>updateAuthUI(session),0);
 });
 
+supabaseClient.auth.getSession().then(({data:{session}})=>{
+  updateAuthUI(session);
+});
 </script>
 </body>
 </html>
