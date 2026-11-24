@@ -171,10 +171,127 @@ logoutButton.addEventListener("click", async () => {
   authMessage.textContent = error ? error.message : "You are logged out.";
 });
 
+async function updateCollectionUI(session) {
+  const loggedOut = document.getElementById("collectionLoggedOut");
+  const dashboard = document.getElementById("collectionDashboard");
+
+  loggedOut.hidden = Boolean(session);
+  dashboard.hidden = !session;
+
+  if (session) {
+    await loadCollection(session.user.id);
+  }
+}
+
+async function loadCollection(userId) {
+  const itemsDiv = document.getElementById("collectionItems");
+  itemsDiv.textContent = "Loading your collection...";
+
+  const { data, error } = await supabaseClient
+    .from("collection")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    itemsDiv.textContent = "Could not load collection: " + error.message;
+    return;
+  }
+
+  itemsDiv.replaceChildren();
+
+  if (!data || data.length === 0) {
+    itemsDiv.textContent = "Your collection is empty. Add your first LEGO item!";
+    return;
+  }
+
+  data.forEach(item => {
+    const card = document.createElement("div");
+    card.style.cssText = "padding:12px;border:1px solid #e2e7ed;border-radius:10px;margin:10px 0";
+
+    const name = document.createElement("strong");
+    name.textContent = item.item_name;
+
+    const details = document.createElement("p");
+    details.textContent =
+      item.item_type + " · ID: " + item.item_id +
+      " · Quantity: " + item.quantity +
+      " · Condition: " + item.item_condition;
+
+    const notes = document.createElement("p");
+    notes.textContent = item.notes || "";
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "Remove";
+    remove.addEventListener("click", async () => {
+      const { error } = await supabaseClient
+        .from("collection")
+        .delete()
+        .eq("id", item.id)
+        .eq("user_id", userId);
+
+      if (error) {
+        alert("Could not remove item: " + error.message);
+      } else {
+        loadCollection(userId);
+      }
+    });
+
+    card.append(name, details, notes, remove);
+    itemsDiv.appendChild(card);
+  });
+}
+
+document.getElementById("collectionForm").addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    document.getElementById("collectionMessage").textContent =
+      "Please log in first.";
+    return;
+  }
+
+  const newItem = {
+    user_id: session.user.id,
+    item_type: document.getElementById("collectionType").value,
+    item_id: document.getElementById("collectionId").value.trim(),
+    item_name: document.getElementById("collectionName").value.trim(),
+    quantity: Number(document.getElementById("collectionQuantity").value),
+    item_condition: document.getElementById("collectionCondition").value,
+    notes: document.getElementById("collectionNotes").value.trim()
+  };
+
+  const { error } = await supabaseClient
+    .from("collection")
+    .insert(newItem);
+
+  const message = document.getElementById("collectionMessage");
+
+  if (error) {
+    message.textContent = "Could not add item: " + error.message;
+    return;
+  }
+
+  message.textContent = "LEGO item successfully added!";
+  event.target.reset();
+  document.getElementById("collectionQuantity").value = 1;
+
+  await loadCollection(session.user.id);
+});
+
 supabaseClient.auth.onAuthStateChange((_event, session) => {
+  logoutButton.hidden = !session;
+  setTimeout(() => updateCollectionUI(session), 0);
+});
+
+supabaseClient.auth.getSession().then(({ data: { session } }) => {
   logoutButton.hidden = !session;
   updateCollectionUI(session);
 });
+
 </script>
 </body>
 </html>
