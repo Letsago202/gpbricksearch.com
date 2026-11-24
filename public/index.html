@@ -83,6 +83,13 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
     <div id="collectionItems">
       <p>Your collection will appear here.</p>
     </div>
+    
+<h3 style="margin-top:28px">❤️ My Favorites</h3>
+<p>Your saved LEGO sets, minifigures, and parts.</p>
+<div id="favoriteItems">
+  <p>Your favorites will appear here.</p>
+</div>
+
   </div>
 </div>
 </section>
@@ -122,8 +129,81 @@ document.querySelectorAll("[data-type]").forEach(b=>b.addEventListener("click",(
 document.querySelectorAll("[data-q]").forEach(b=>b.addEventListener("click",()=>{$("#query").value=b.dataset.q;$("#searchForm").requestSubmit();}));
 async function checkHealth(){try{const r=await fetch("/api/health");const d=await r.json();$("#apiState").textContent=d.rebrickableConfigured?"API key configured":"API setup needed";$("#apiState").style.background=d.rebrickableConfigured?"#e8f5ed":"#fff4d7";$("#apiState").style.color=d.rebrickableConfigured?"#28784b":"#805d00";}catch{$("#apiState").textContent="Server unavailable";}}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function render(items){const grid=$("#results");if(!items.length){grid.innerHTML='<div class="empty">No matching results found. Try another search term.</div>';return;}
-grid.innerHTML=items.map(item=>`<article class="card"><div class="pic">${item.image?`<img loading="lazy" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">`:"🧱"}</div><div class="body"><h3>${escapeHtml(item.name)}</h3><div class="meta">${escapeHtml(item.year||"Year not listed")}${item.numParts?` · ${escapeHtml(item.numParts)} parts`:""}</div><div class="id">${escapeHtml(item.id||"Catalog item")}</div>${item.url?`<div style="margin-top:8px"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#245c8e;font-weight:800">View Rebrickable ↗</a></div>`:""}</div></article>`).join("");}
+
+function render(items) {
+  const grid = $("#results");
+
+  if (!items.length) {
+    grid.innerHTML = '<div class="empty">No matching results found. Try another search term.</div>';
+    return;
+  }
+
+  grid.replaceChildren();
+
+  items.forEach(item => {
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const pic = document.createElement("div");
+    pic.className = "pic";
+
+    if (item.image) {
+      const img = document.createElement("img");
+      img.loading = "lazy";
+      img.src = item.image;
+      img.alt = item.name || "LEGO catalog item";
+      pic.appendChild(img);
+    } else {
+      pic.textContent = "🧱";
+    }
+
+    const body = document.createElement("div");
+    body.className = "body";
+
+    const heading = document.createElement("h3");
+    heading.textContent = item.name || "Unnamed LEGO item";
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.textContent =
+      (item.year || "Year not listed") +
+      (item.numParts ? " · " + item.numParts + " parts" : "");
+
+    const id = document.createElement("div");
+    id.className = "id";
+    id.textContent = item.id || "Catalog item";
+
+    body.append(heading, meta, id);
+
+    if (item.url) {
+      const linkWrap = document.createElement("div");
+      linkWrap.style.marginTop = "8px";
+
+      const link = document.createElement("a");
+      link.href = item.url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.style.cssText = "font-size:11px;color:#245c8e;font-weight:800";
+      link.textContent = "View Rebrickable ↗";
+
+      linkWrap.appendChild(link);
+      body.appendChild(linkWrap);
+    }
+
+    const favoriteButton = document.createElement("button");
+    favoriteButton.type = "button";
+    favoriteButton.className = "tab";
+    favoriteButton.style.marginTop = "10px";
+    favoriteButton.textContent = "❤️ Add to Favorites";
+    favoriteButton.addEventListener("click", () => saveFavorite(item));
+
+    body.appendChild(favoriteButton);
+
+    card.append(pic, body);
+    grid.appendChild(card);
+  });
+}
+
 $("#searchForm").addEventListener("submit",async e=>{e.preventDefault();const q=$("#query").value.trim();if(!q)return;showStatus("Searching Rebrickable…");$("#results").innerHTML='<div class="empty">Loading catalog results…</div>';$("#resultsHint").textContent=`Searching ${labels[selectedType]} for “${q}”.`;
 try{const response=await fetch(`/api/search?q=${encodeURIComponent(q)}&type=${encodeURIComponent(selectedType)}&page_size=24`);const data=await response.json();if(!response.ok){showStatus(data.error||"Search failed.", "error");$("#results").innerHTML='<div class="empty">Catalog results are not available yet.</div>';return;}render(data.results||[]);showStatus(`${(data.results||[]).length} results shown · ${data.count??0} total catalog matches.`,"good");}catch{showStatus("Could not reach GPBrickSearch. Make sure the server is running.","error");$("#results").innerHTML='<div class="empty">Server connection unavailable.</div>';}});checkHealth();
   const authForm = document.getElementById("authForm");
@@ -179,8 +259,9 @@ async function updateCollectionUI(session) {
   dashboard.hidden = !session;
 
   if (session) {
-    await loadCollection(session.user.id);
-  }
+  await loadCollection(session.user.id);
+  await loadFavorites(session.user.id);
+}
 }
 
 async function loadCollection(userId) {
@@ -242,6 +323,93 @@ async function loadCollection(userId) {
     itemsDiv.appendChild(card);
   });
 }
+
+async function loadFavorites(userId) {
+  const favoritesDiv = document.getElementById("favoriteItems");
+  if (!favoritesDiv) return;
+
+  favoritesDiv.textContent = "Loading your favorites...";
+
+  const { data, error } = await supabaseClient
+    .from("favorites")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    favoritesDiv.textContent = "Could not load favorites: " + error.message;
+    return;
+  }
+
+  favoritesDiv.replaceChildren();
+
+  if (!data || data.length === 0) {
+    favoritesDiv.textContent = "You haven't saved any favorites yet.";
+    return;
+  }
+
+  data.forEach(item => {
+    const card = document.createElement("div");
+    card.style.cssText = "padding:12px;border:1px solid #e2e7ed;border-radius:10px;margin:10px 0";
+
+    const name = document.createElement("strong");
+    name.textContent = item.item_name;
+
+    const details = document.createElement("p");
+    details.textContent = item.item_type + " · ID: " + item.item_id;
+
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "Remove from Favorites";
+
+    remove.addEventListener("click", async () => {
+      const { error } = await supabaseClient
+        .from("favorites")
+        .delete()
+        .eq("id", item.id)
+        .eq("user_id", userId);
+
+      if (error) {
+        alert("Could not remove favorite: " + error.message);
+      } else {
+        loadFavorites(userId);
+      }
+    });
+
+    card.append(name, details, remove);
+    favoritesDiv.appendChild(card);
+  });
+}
+
+async function saveFavorite(item) {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    alert("Please log in to save favorites.");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("favorites")
+    .insert({
+      user_id: session.user.id,
+      item_type: item.category,
+      item_id: String(item.id),
+      item_name: item.name,
+      image_url: item.image || null
+    });
+
+  if (error) {
+    alert(error.code === "23505"
+      ? "This item is already in your favorites!"
+      : "Could not save favorite: " + error.message);
+    return;
+  }
+
+  alert("Added to your favorites!");
+  loadFavorites(session.user.id);
+}
+
 
 document.getElementById("collectionForm").addEventListener("submit", async event => {
   event.preventDefault();
