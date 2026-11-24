@@ -71,6 +71,8 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
 
       <label for="collectionNotes">Notes (optional)</label>
       <input id="collectionNotes" placeholder="Any extra details">
+      <label for="collectionValue">Estimated Value ($)</label>
+<input id="collectionValue" type="number" min="0" step="0.01" placeholder="Example: 249.99">
 
       <button class="primary" type="submit" style="padding:12px 18px;margin-top:12px">
         Add to My Collection
@@ -78,7 +80,10 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
     </form>
 
     <p id="collectionMessage" role="status"></p>
-
+<div style="background:#142335;color:white;padding:16px;border-radius:12px;margin-top:20px">
+  <div style="font-size:12px;color:#c7d5e2">TOTAL ESTIMATED COLLECTION VALUE</div>
+  <div id="collectionTotal" style="font-size:28px;font-weight:900">$0.00</div>
+</div>
     <h3 style="margin-top:24px">My Items</h3>
     <div id="collectionItems">
       <p>Your collection will appear here.</p>
@@ -279,7 +284,14 @@ async function loadCollection(userId) {
     return;
   }
 
-  itemsDiv.replaceChildren();
+   itemsDiv.replaceChildren();
+
+  const totalValue = (data || []).reduce((total, item) => {
+    return total + (Number(item.estimated_value) || 0) * (Number(item.quantity) || 1);
+  }, 0);
+
+  document.getElementById("collectionTotal").textContent =
+    "$" + totalValue.toFixed(2);
 
   if (!data || data.length === 0) {
     itemsDiv.textContent = "Your collection is empty. Add your first LEGO item!";
@@ -301,7 +313,10 @@ async function loadCollection(userId) {
 
     const notes = document.createElement("p");
     notes.textContent = item.notes || "";
-
+const value = document.createElement("p");
+value.textContent = item.estimated_value !== null && item.estimated_value !== undefined
+  ? "Estimated Value: $" + Number(item.estimated_value).toFixed(2)
+  : "Estimated Value: Not entered";
     const remove = document.createElement("button");
     remove.type = "button";
     remove.textContent = "Remove";
@@ -319,7 +334,7 @@ async function loadCollection(userId) {
       }
     });
 
-    card.append(name, details, notes, remove);
+    card.append(name, details, notes, value, remove);
     itemsDiv.appendChild(card);
   });
 }
@@ -429,7 +444,13 @@ document.getElementById("collectionForm").addEventListener("submit", async event
     item_name: document.getElementById("collectionName").value.trim(),
     quantity: Number(document.getElementById("collectionQuantity").value),
     item_condition: document.getElementById("collectionCondition").value,
-    notes: document.getElementById("collectionNotes").value.trim()
+       notes: document.getElementById("collectionNotes").value.trim(),
+    estimated_value: document.getElementById("collectionValue").value
+      ? Number(document.getElementById("collectionValue").value)
+      : null,
+    value_updated_at: document.getElementById("collectionValue").value
+      ? new Date().toISOString()
+      : null
   };
 
   const { error } = await supabaseClient
