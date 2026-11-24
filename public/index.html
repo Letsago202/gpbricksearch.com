@@ -51,8 +51,16 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
 
 </main>
 <footer><div class="foot"><div><strong>GPBrickSearch</strong><br><small>Discover. Compare. Collect.</small></div><small>Independent project; not affiliated with or endorsed by the LEGO Group.</small></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 let selectedType="sets";
+const SUPABASE_URL = "https://juvvwyrfbexkdtothixw.supabase.co";
+const SUPABASE_KEY = "sb_publishable_SeYFUHZAKA9tvy2IHjZzDw__7T9dReA";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 const labels={sets:"LEGO sets",minifigs:"minifigures",parts:"bricks & parts"};
 const $=s=>document.querySelector(s);
 function showStatus(message,kind=""){const el=$("#status");el.textContent=message;el.className="status "+kind;el.style.display="block";}
