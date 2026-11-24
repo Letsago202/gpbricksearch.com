@@ -32,7 +32,60 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
 <div class="status" id="status" role="status" aria-live="polite"></div>
 <div class="rowhead"><div><h2 id="resultsTitle">Explore LEGO sets</h2><p id="resultsHint">Search above to load live Rebrickable catalog results.</p></div></div>
 <div class="results" id="results"><div class="empty">Your search results will appear here once you search the catalog.</div></div></section>
-<section class="panels" id="prices"><div class="panel dark"><div class="kicker">Collector tools</div><h3>Price comparisons & history</h3><p>Marketplace prices and historical trends are planned for a later integration. Rebrickable does not provide pricing data, so GPBrickSearch will connect to separate permitted sources.</p></div><div class="panel" id="collection"><div class="kicker" style="color:#b51f27">Coming next</div><h3>Your LEGO collection</h3><p>Accounts, favorites, wishlists and collection value tracking will be added after the catalog search is working.</p></div></section>
+<section class="panels" id="prices"><div class="panel dark"><div class="kicker">Collector tools</div><h3>Price comparisons & history</h3><p>Marketplace prices and historical trends are planned for a later integration. Rebrickable does not provide pricing data, so GPBrickSearch will connect to separate permitted sources.</p></div><div class="panel" id="collection">
+
+  <div class="kicker" style="color:#b51f27">Your personal LEGO library</div>
+  <h3>My LEGO Collection</h3>
+  <p>Add and manage the LEGO sets, minifigures, and parts you own.</p>
+
+  <div id="collectionLoggedOut">
+    <p>Log in to view and manage your collection.</p>
+  </div>
+
+  <div id="collectionDashboard" hidden>
+    <h3>Add an item</h3>
+
+    <form id="collectionForm">
+      <label for="collectionType">Item type</label>
+      <select id="collectionType" required>
+        <option value="sets">LEGO Set</option>
+        <option value="minifigs">Minifigure</option>
+        <option value="parts">Brick or Part</option>
+      </select>
+
+      <label for="collectionId">Set number or item ID</label>
+      <input id="collectionId" required placeholder="Example: 75192">
+
+      <label for="collectionName">Item name</label>
+      <input id="collectionName" required placeholder="Example: Millennium Falcon">
+
+      <label for="collectionQuantity">Quantity</label>
+      <input id="collectionQuantity" type="number" min="1" value="1" required>
+
+      <label for="collectionCondition">Condition</label>
+      <select id="collectionCondition">
+        <option value="New">New</option>
+        <option value="Used">Used</option>
+        <option value="Incomplete">Incomplete</option>
+      </select>
+
+      <label for="collectionNotes">Notes (optional)</label>
+      <input id="collectionNotes" placeholder="Any extra details">
+
+      <button class="primary" type="submit" style="padding:12px 18px;margin-top:12px">
+        Add to My Collection
+      </button>
+    </form>
+
+    <p id="collectionMessage" role="status"></p>
+
+    <h3 style="margin-top:24px">My Items</h3>
+    <div id="collectionItems">
+      <p>Your collection will appear here.</p>
+    </div>
+  </div>
+</div>
+</section>
 
 <section class="panel" id="account" style="margin-bottom:20px">
   <h2>My GPBrickSearch Account</h2>
