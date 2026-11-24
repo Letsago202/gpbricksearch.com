@@ -523,14 +523,287 @@ document.getElementById("collectionForm").addEventListener("submit", async event
   await loadCollection(session.user.id);
 });
 
+async function loadForum() {
+  const feed = document.getElementById("forumFeed");
+  const sort = document.getElementById("forumSort").value;
+
+  feed.textContent = "Loading discussions...";
+const { data: { session } } = await supabaseClient.auth.getSession();
+  const { data: posts, error } = await supabaseClient
+    .from("forum_posts")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    feed.textContent = "Could not load discussions: " + error.message;
+    return;
+  }
+
+  if (!posts || posts.length === 0) {
+    feed.textContent = "No discussions yet. Be the first to start one!";
+    return;
+  }
+const { data: comments, error: commentsError } = await supabaseClient
+  .from("forum_comments")
+  .select("*")
+  .order("created_at", { ascending: true });
+
+if (commentsError) {
+  feed.textContent = "Could not load comments: " + commentsError.message;
+  return;
+}
+  const { data: votes, error: voteError } = await supabaseClient
+    .from("forum_votes")
+    .select("post_id, vote");
+
+  if (voteError) {
+    feed.textContent = "Could not load votes: " + voteError.message;
+    return;
+  }
+
+  const scores = {};
+  (votes || []).forEach(vote => {
+    scores[vote.post_id] = (scores[vote.post_id] || 0) + vote.vote;
+  });
+
+  if (sort === "top") {
+    posts.sort((a, b) =>
+      (scores[b.id] || 0) - (scores[a.id] || 0)
+    );
+  }
+
+  feed.replaceChildren();
+
+  posts.forEach(post => {
+    const card = document.createElement("article");
+    card.style.cssText =
+      "padding:18px;border:1px solid #e2e7ed;border-radius:12px;margin:12px 0;background:white";
+
+    const category = document.createElement("div");
+    category.textContent = post.category;
+    category.style.cssText =
+      "font-size:11px;font-weight:900;color:#b51f27;text-transform:uppercase";
+
+    const title = document.createElement("h3");
+    title.textContent = post.title;
+
+    const body = document.createElement("p");
+    body.textContent = post.body;
+
+    const date = document.createElement("small");
+    date.textContent = new Date(post.created_at).toLocaleString();
+    date.style.color = "#667587";
+
+const voteArea = document.createElement("div");
+voteArea.style.cssText = "display:flex;align-items:center;gap:10px;margin-top:14px";
+
+const upvote = document.createElement("button");
+upvote.textContent = "▲ Upvote";
+upvote.className = "tab";
+
+const score = document.createElement("strong");
+score.textContent = scores[post.id] || 0;
+
+const downvote = document.createElement("button");
+downvote.textContent = "▼ Downvote";
+downvote.className = "tab";
+
+upvote.addEventListener("click", () => voteOnPost(post.id, 1));
+downvote.addEventListener("click", () => voteOnPost(post.id, -1));
+
+voteArea.append(upvote, score, downvote);
+
+const commentsArea = document.createElement("div");
+commentsArea.style.cssText = "margin-top:18px;padding-top:14px;border-top:1px solid #e2e7ed";
+
+const commentsTitle = document.createElement("strong");
+commentsTitle.textContent = "💬 Comments";
+
+const commentsList = document.createElement("div");
+commentsList.style.marginTop = "10px";
+
+const postComments = (comments || []).filter(
+  comment => comment.post_id === post.id
+);
+
+if (postComments.length === 0) {
+  commentsList.textContent = "No comments yet. Be the first to comment!";
+} else {
+  postComments.forEach(comment => {
+    const commentCard = document.createElement("div");
+    commentCard.style.cssText =
+      "padding:10px;background:#f5f7f9;border-radius:8px;margin:8px 0";
+
+    const commentBody = document.createElement("p");
+    commentBody.textContent = comment.body;
+    commentBody.style.margin = "0";
+
+    const commentDate = document.createElement("small");
+    commentDate.textContent = new Date(comment.created_at).toLocaleString();
+    commentDate.style.color = "#667587";
+
+    commentCard.append(commentBody, commentDate);
+    commentsList.appendChild(commentCard);
+  });
+}
+
+commentsArea.append(commentsTitle, commentsList);
+if (session) {
+  const commentForm = document.createElement("form");
+  commentForm.style.cssText = "display:flex;gap:8px;margin-top:12px";
+
+  const commentInput = document.createElement("input");
+  commentInput.type = "text";
+  commentInput.placeholder = "Write a comment...";
+  commentInput.maxLength = 5000;
+  commentInput.required = true;
+  commentInput.style.cssText = "flex:1;min-width:0;padding:10px;border:1px solid #e2e7ed;border-radius:8px";
+
+  const commentButton = document.createElement("button");
+  commentButton.type = "submit";
+  commentButton.className = "primary";
+  commentButton.textContent = "Comment";
+  commentButton.style.padding = "10px 14px";
+
+  commentForm.append(commentInput, commentButton);
+  commentForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    await addForumComment(post.id, commentInput.value);
+  });
+
+  commentsArea.appendChild(commentForm);
+}
+card.append(category, title, body, date, voteArea, commentsArea);
+    feed.appendChild(card);
+  });
+}
+
+document.getElementById("forumSort").addEventListener("change", loadForum);
+async function voteOnPost(postId, voteValue) {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    alert("Please log in to vote!");
+    return;
+  }
+
+  const { error: deleteError } = await supabaseClient
+    .from("forum_votes")
+    .delete()
+    .eq("post_id", postId)
+    .eq("user_id", session.user.id);
+
+  if (deleteError) {
+    alert("Could not update your vote: " + deleteError.message);
+    return;
+  }
+
+  const { error: insertError } = await supabaseClient
+    .from("forum_votes")
+    .insert({
+      post_id: postId,
+      user_id: session.user.id,
+      vote: voteValue
+    });
+
+  if (insertError) {
+    alert("Could not save your vote: " + insertError.message);
+    return;
+  }
+
+  await loadForum();
+}
+async function createForumPost(event) {
+  event.preventDefault();
+
+  const message = document.getElementById("forumMessage");
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    message.textContent = "Please log in to publish a discussion.";
+    return;
+  }
+
+  const title = document.getElementById("forumTitle").value.trim();
+  const body = document.getElementById("forumBody").value.trim();
+  const category = document.getElementById("forumCategory").value;
+
+  message.textContent = "Publishing your discussion...";
+
+  const { error } = await supabaseClient
+    .from("forum_posts")
+    .insert({
+      user_id: session.user.id,
+      title,
+      body,
+      category
+    });
+
+  if (error) {
+    message.textContent = "Could not publish: " + error.message;
+    return;
+  }
+
+  message.textContent = "Your discussion has been published!";
+  document.getElementById("forumPostForm").reset();
+
+  await loadForum();
+}
+  
+  async function addForumComment(postId, body) {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    alert("Please log in to comment!");
+    return;
+  }
+
+  const commentText = body.trim();
+
+  if (!commentText) {
+    alert("Please write a comment first.");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("forum_comments")
+    .insert({
+      post_id: postId,
+      user_id: session.user.id,
+      body: commentText
+    });
+
+  if (error) {
+    alert("Could not post comment: " + error.message);
+    return;
+  }
+
+  await loadForum();
+}
+
+document.getElementById("forumPostForm")
+  .addEventListener("submit", createForumPost);
+
 supabaseClient.auth.onAuthStateChange((_event, session) => {
   logoutButton.hidden = !session;
-  setTimeout(() => updateCollectionUI(session), 0);
+
+  document.getElementById("forumLoggedOut").hidden = Boolean(session);
+  document.getElementById("forumComposer").hidden = !session;
+
+  setTimeout(() => {
+    updateCollectionUI(session);
+    loadForum();
+  }, 0);
 });
 
 supabaseClient.auth.getSession().then(({ data: { session } }) => {
   logoutButton.hidden = !session;
+
+  document.getElementById("forumLoggedOut").hidden = Boolean(session);
+  document.getElementById("forumComposer").hidden = !session;
+
   updateCollectionUI(session);
+  loadForum();
 });
 
 </script>
