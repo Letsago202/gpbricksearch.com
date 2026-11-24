@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Search LEGO minifigures, sets and parts with GPBrickSearch.">
+<title>GPBrickSearch — Everything LEGO. One Search.</title>
+<style>
+:root{--red:#e3292e;--navy:#142335;--blue:#245c8e;--ink:#182432;--muted:#667587;--line:#e2e7ed;--bg:#f5f7f9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,Segoe UI,Arial,sans-serif}
+header{background:#111b27;color:white;padding:12px max(18px,calc((100% - 1160px)/2));display:flex;justify-content:space-between;align-items:center;gap:20px}
+.brand{display:flex;align-items:center;gap:10px;color:white;text-decoration:none;font-size:20px;font-weight:900;letter-spacing:-.6px}.logo{background:var(--red);border-radius:11px;width:40px;height:40px;display:grid;place-items:center;box-shadow:inset 0 -3px #a9141b}
+nav{display:flex;gap:20px}nav a{color:#dce4ec;text-decoration:none;font-size:13px;font-weight:700}
+main{max-width:1160px;margin:auto;padding:28px 20px 70px}.hero{background:linear-gradient(125deg,#142334,#244967);color:white;border-radius:22px;padding:42px;position:relative;overflow:hidden}.kicker{color:#ffcf55;font-size:11px;font-weight:900;letter-spacing:1.7px;text-transform:uppercase}.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.02;letter-spacing:-2px;margin:12px 0}.hero p{color:#d2deea;max-width:590px}.search{display:flex;background:white;border-radius:12px;padding:6px;max-width:760px;margin-top:24px;gap:5px}.search input{border:0;outline:0;min-width:0;flex:1;padding:12px;color:#17212b;font-size:15px}.search button,.primary{background:var(--red);color:white;border:0;border-radius:9px;padding:0 20px;font-weight:850}.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.quick button{border:1px solid #ffffff55;background:#ffffff12;color:white;border-radius:30px;padding:6px 12px;font-size:12px}
+.rowhead{display:flex;justify-content:space-between;align-items:end;margin:30px 0 14px;gap:12px}.rowhead h2{font-size:22px;margin:0;letter-spacing:-.5px}.rowhead p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}.tab{background:white;border:1px solid var(--line);border-radius:9px;padding:9px 14px;font-size:13px;font-weight:800;color:#425164}.tab[aria-pressed=true]{background:#172b3e;color:white;border-color:#172b3e}
+.status{display:none;margin:18px 0;padding:12px 15px;border-radius:10px;background:#fff;border:1px solid var(--line);font-size:13px}.status.error{border-color:#f0b7b9;background:#fff5f5;color:#8b2025}.status.good{background:#f0faf4;border-color:#bde5ca;color:#205e39}
+.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card{background:white;border:1px solid var(--line);border-radius:14px;overflow:hidden;min-width:0}.pic{height:160px;background:linear-gradient(145deg,#f2f5f7,#e8edf2);display:grid;place-items:center;color:#7b8b9c;font-size:45px}.pic img{width:100%;height:100%;object-fit:contain;padding:12px}.body{padding:13px}.body h3{font-size:14px;margin:0 0 4px}.meta{font-size:11px;color:var(--muted)}.id{font-size:12px;font-weight:800;color:#34485d;margin-top:8px}.empty{grid-column:1/-1;background:white;border:1px dashed #cbd4de;border-radius:13px;text-align:center;padding:34px;color:var(--muted)}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px}.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:22px}.panel.dark{background:var(--navy);color:white;border:0}.panel p{color:var(--muted);font-size:13px}.panel.dark p{color:#c7d5e2}.panel h3{margin:0 0 7px}.pill{display:inline-block;border-radius:30px;background:#fce9e9;color:#a51e24;padding:5px 9px;font-size:10px;font-weight:900}
+footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px;margin:auto;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}.foot small{color:#aab6c2}
+@media(max-width:800px){nav{display:none}.results{grid-template-columns:repeat(2,minmax(0,1fr))}.panels{grid-template-columns:1fr}.hero{padding:30px 23px}}
+@media(max-width:430px){main{padding:16px 12px 45px}.results{gap:9px}.pic{height:120px}.body{padding:10px}.search button{padding:0 13px}}
+</style>
+</head>
+<body>
+<header><a class="brand" href="/"><span class="logo">GP</span>GPBrickSearch</a><nav><a href="#search">Search</a><a href="#catalog">Catalog</a><a href="#prices">Price Guide</a><a href="#collection">My Collection</a></nav></header>
+<main>
+<section class="hero" id="search"><div class="kicker">The LEGO discovery engine</div><h1>Everything LEGO.<br>One Search.</h1><p>Find minifigures, sets and parts. Explore the catalog and discover your next collectible.</p>
+<form class="search" id="searchForm"><input id="query" placeholder="Try a name, set number or part number…" autocomplete="off" required><button type="submit">Search</button></form>
+<div class="quick"><button type="button" data-q="Batman">Batman</button><button type="button" data-q="75192">75192</button><button type="button" data-q="3001">3001</button><button type="button" data-q="Star Wars">Star Wars</button></div></section>
+<section id="catalog"><div class="rowhead"><div><h2>Search the catalog</h2><p>Choose what you want to find.</p></div><span class="pill" id="apiState">Checking API…</span></div>
+<div class="tabs" role="group" aria-label="Catalog category"><button class="tab" data-type="sets" aria-pressed="true">LEGO Sets</button><button class="tab" data-type="minifigs" aria-pressed="false">Minifigures</button><button class="tab" data-type="parts" aria-pressed="false">Bricks & Parts</button></div>
+<div class="status" id="status" role="status" aria-live="polite"></div>
+<div class="rowhead"><div><h2 id="resultsTitle">Explore LEGO sets</h2><p id="resultsHint">Search above to load live Rebrickable catalog results.</p></div></div>
+<div class="results" id="results"><div class="empty">Your search results will appear here once you search the catalog.</div></div></section>
+<section class="panels" id="prices"><div class="panel dark"><div class="kicker">Collector tools</div><h3>Price comparisons & history</h3><p>Marketplace prices and historical trends are planned for a later integration. Rebrickable does not provide pricing data, so GPBrickSearch will connect to separate permitted sources.</p></div><div class="panel" id="collection"><div class="kicker" style="color:#b51f27">Coming next</div><h3>Your LEGO collection</h3><p>Accounts, favorites, wishlists and collection value tracking will be added after the catalog search is working.</p></div></section>
+</main>
+<footer><div class="foot"><div><strong>GPBrickSearch</strong><br><small>Discover. Compare. Collect.</small></div><small>Independent project; not affiliated with or endorsed by the LEGO Group.</small></div></footer>
+<script>
+let selectedType="sets";
+const labels={sets:"LEGO sets",minifigs:"minifigures",parts:"bricks & parts"};
+const $=s=>document.querySelector(s);
+function showStatus(message,kind=""){const el=$("#status");el.textContent=message;el.className="status "+kind;el.style.display="block";}
+function setType(type){selectedType=type;document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.type===type)));$("#resultsTitle").textContent="Explore "+labels[type];$("#resultsHint").textContent="Search above to load live Rebrickable catalog results.";}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setType(b.dataset.type)));
+document.querySelectorAll("[data-q]").forEach(b=>b.addEventListener("click",()=>{$("#query").value=b.dataset.q;$("#searchForm").requestSubmit();}));
+async function checkHealth(){try{const r=await fetch("/api/health");const d=await r.json();$("#apiState").textContent=d.rebrickableConfigured?"API key configured":"API setup needed";$("#apiState").style.background=d.rebrickableConfigured?"#e8f5ed":"#fff4d7";$("#apiState").style.color=d.rebrickableConfigured?"#28784b":"#805d00";}catch{$("#apiState").textContent="Server unavailable";}}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function render(items){const grid=$("#results");if(!items.length){grid.innerHTML='<div class="empty">No matching results found. Try another search term.</div>';return;}
+grid.innerHTML=items.map(item=>`<article class="card"><div class="pic">${item.image?`<img loading="lazy" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">`:"🧱"}</div><div class="body"><h3>${escapeHtml(item.name)}</h3><div class="meta">${escapeHtml(item.year||"Year not listed")}${item.numParts?` · ${escapeHtml(item.numParts)} parts`:""}</div><div class="id">${escapeHtml(item.id||"Catalog item")}</div>${item.url?`<div style="margin-top:8px"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#245c8e;font-weight:800">View Rebrickable ↗</a></div>`:""}</div></article>`).join("");}
+$("#searchForm").addEventListener("submit",async e=>{e.preventDefault();const q=$("#query").value.trim();if(!q)return;showStatus("Searching Rebrickable…");$("#results").innerHTML='<div class="empty">Loading catalog results…</div>';$("#resultsHint").textContent=`Searching ${labels[selectedType]} for “${q}”.`;
+try{const response=await fetch(`/api/search?q=${encodeURIComponent(q)}&type=${encodeURIComponent(selectedType)}&page_size=24`);const data=await response.json();if(!response.ok){showStatus(data.error||"Search failed.", "error");$("#results").innerHTML='<div class="empty">Catalog results are not available yet.</div>';return;}render(data.results||[]);showStatus(`${(data.results||[]).length} results shown · ${data.count??0} total catalog matches.`,"good");}catch{showStatus("Could not reach GPBrickSearch. Make sure the server is running.","error");$("#results").innerHTML='<div class="empty">Server connection unavailable.</div>';}});checkHealth();
+</script>
+</body></html>
