@@ -164,7 +164,15 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
     <button class="primary" type="submit" id="loginButton">Log In</button>
     <button class="tab" type="button" id="signupButton">Create Account</button>
   </form>
-
+<div id="profileEditor" hidden style="margin-top:20px;padding:16px;background:#f5f7f9;border-radius:12px">
+  <h3>My Profile</h3>
+  <label for="savedUsername">My Username</label>
+  <input id="savedUsername" type="text" maxlength="30" placeholder="Choose your username">
+  <button class="primary" type="button" id="saveUsernameButton" style="padding:10px 16px;margin-top:10px">
+    Save Username
+  </button>
+  <p id="profileMessage" role="status"></p>
+</div>
   <p id="authMessage" role="status"></p>
   <button class="tab" type="button" id="logoutButton" hidden>Log Out</button>
 </section>
@@ -270,7 +278,37 @@ try{const response=await fetch(`/api/search?q=${encodeURIComponent(q)}&type=${en
 const signupButton = document.getElementById("signupButton");
 const logoutButton = document.getElementById("logoutButton");
 const authMessage = document.getElementById("authMessage");
+const profileEditor = document.getElementById("profileEditor");
+const savedUsername = document.getElementById("savedUsername");
+const profileMessage = document.getElementById("profileMessage");
+const saveUsernameButton = document.getElementById("saveUsernameButton");
 
+saveUsernameButton.addEventListener("click", async () => {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    profileMessage.textContent = "Please log in first.";
+    return;
+  }
+
+  const username = savedUsername.value.trim();
+
+  if (!username) {
+    profileMessage.textContent = "Please enter a username.";
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("profiles")
+    .upsert({
+      id: session.user.id,
+      username: username
+    });
+
+  profileMessage.textContent = error
+    ? "Could not save username: " + error.message
+    : "Username saved successfully! 🎉";
+});
 authForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -791,10 +829,34 @@ async function createForumPost(event) {
 
 document.getElementById("forumPostForm")
   .addEventListener("submit", createForumPost);
+async function updateProfileUI(session) {
+  const profileEditor = document.getElementById("profileEditor");
+  const savedUsername = document.getElementById("savedUsername");
 
+  profileEditor.hidden = !session;
+
+  if (!session) {
+    savedUsername.value = "";
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("username")
+    .eq("id", session.user.id)
+    .single();
+
+  if (error) {
+    document.getElementById("profileMessage").textContent =
+      "Could not load profile: " + error.message;
+    return;
+  }
+
+  savedUsername.value = data.username || "";
+}
 supabaseClient.auth.onAuthStateChange((_event, session) => {
   logoutButton.hidden = !session;
-
+  updateProfileUI(session);
   document.getElementById("forumLoggedOut").hidden = Boolean(session);
   document.getElementById("forumComposer").hidden = !session;
 
@@ -806,7 +868,7 @@ supabaseClient.auth.onAuthStateChange((_event, session) => {
 
 supabaseClient.auth.getSession().then(({ data: { session } }) => {
   logoutButton.hidden = !session;
-
+  updateProfileUI(session);
   document.getElementById("forumLoggedOut").hidden = Boolean(session);
   document.getElementById("forumComposer").hidden = !session;
 
