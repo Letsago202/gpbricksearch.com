@@ -692,6 +692,30 @@ if (commentsError) {
   feed.textContent = "Could not load comments: " + commentsError.message;
   return;
 }
+const forumUserIds = [...new Set([
+  ...(posts || []).map(post => post.user_id),
+  ...(comments || []).map(comment => comment.user_id)
+])];
+
+let commentProfiles = [];
+
+if (forumUserIds.length) {
+  const { data: profiles, error: profileError } = await supabaseClient
+    .from("profiles")
+    .select("id, username, avatar_url")
+    .in("id", forumUserIds);
+
+  if (profileError) {
+    feed.textContent = "Could not load user profiles: " + profileError.message;
+    return;
+  }
+
+  commentProfiles = profiles || [];
+}
+
+const profileById = Object.fromEntries(
+  commentProfiles.map(profile => [profile.id, profile])
+);
   const { data: votes, error: voteError } = await supabaseClient
     .from("forum_votes")
     .select("post_id, vote");
@@ -723,7 +747,33 @@ if (commentsError) {
     category.textContent = post.category;
     category.style.cssText =
       "font-size:11px;font-weight:900;color:#b51f27;text-transform:uppercase";
+const postProfile = profileById[post.user_id];
 
+const postAuthorRow = document.createElement("div");
+postAuthorRow.style.cssText =
+  "display:flex;align-items:center;gap:9px;margin:10px 0";
+
+const postUsername = document.createElement("strong");
+postUsername.textContent = postProfile?.username || "LEGO Member";
+postUsername.style.fontSize = "13px";
+
+if (postProfile?.avatar_url) {
+  const postAvatar = document.createElement("img");
+  postAvatar.src = postProfile.avatar_url;
+  postAvatar.alt = "";
+  postAvatar.style.cssText =
+    "width:40px;height:40px;border-radius:50%;object-fit:cover;background:#dce4ec";
+
+  postAuthorRow.append(postAvatar, postUsername);
+} else {
+  const postFallbackAvatar = document.createElement("div");
+  postFallbackAvatar.textContent =
+    (postProfile?.username || "L").charAt(0).toUpperCase();
+  postFallbackAvatar.style.cssText =
+    "width:40px;height:40px;border-radius:50%;background:#142335;color:white;display:grid;place-items:center;font-weight:900";
+
+  postAuthorRow.append(postFallbackAvatar, postUsername);
+}
     const title = document.createElement("h3");
     title.textContent = post.title;
 
@@ -774,15 +824,42 @@ if (postComments.length === 0) {
     commentCard.style.cssText =
       "padding:10px;background:#f5f7f9;border-radius:8px;margin:8px 0";
 
-    const commentBody = document.createElement("p");
-    commentBody.textContent = comment.body;
-    commentBody.style.margin = "0";
+const profile = profileById[comment.user_id];
 
-    const commentDate = document.createElement("small");
-    commentDate.textContent = new Date(comment.created_at).toLocaleString();
-    commentDate.style.color = "#667587";
+const authorRow = document.createElement("div");
+authorRow.style.cssText =
+  "display:flex;align-items:center;gap:9px;margin-bottom:8px";
 
-    commentCard.append(commentBody, commentDate);
+const username = document.createElement("strong");
+username.textContent = profile?.username || "LEGO Member";
+username.style.fontSize = "13px";
+
+if (profile?.avatar_url) {
+  const avatar = document.createElement("img");
+  avatar.src = profile.avatar_url;
+  avatar.alt = "";
+  avatar.style.cssText =
+    "width:36px;height:36px;border-radius:50%;object-fit:cover;background:#dce4ec";
+
+  authorRow.append(avatar, username);
+} else {
+  const fallbackAvatar = document.createElement("div");
+  fallbackAvatar.textContent =
+    (profile?.username || "L").charAt(0).toUpperCase();
+  fallbackAvatar.style.cssText =
+    "width:36px;height:36px;border-radius:50%;background:#142335;color:white;display:grid;place-items:center;font-weight:900";
+
+  authorRow.append(fallbackAvatar, username);
+}
+const commentBody = document.createElement("p");
+commentBody.textContent = comment.body;
+commentBody.style.margin = "0";
+
+const commentDate = document.createElement("small");
+commentDate.textContent = new Date(comment.created_at).toLocaleString();
+commentDate.style.color = "#667587";
+
+commentCard.append(authorRow, commentBody, commentDate);
     commentsList.appendChild(commentCard);
   });
 }
@@ -813,7 +890,7 @@ if (session) {
 
   commentsArea.appendChild(commentForm);
 }
-card.append(category, title, body, date, voteArea, commentsArea);
+card.append(category, postAuthorRow, title, body, date, voteArea, commentsArea);
     feed.appendChild(card);
   });
 }
