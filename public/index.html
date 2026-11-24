@@ -6,6 +6,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="description" content="Search LEGO minifigures, sets and parts with GPBrickSearch.">
 <title>GPBrickSearch — Everything LEGO. One Search.</title>
+
+<!-- GP browser tab icon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='13' fill='%23e3292e'/%3E%3Ctext x='32' y='43' font-family='Arial,sans-serif' font-size='29' font-weight='900' text-anchor='middle' fill='white'%3EGP%3C/text%3E%3C/svg%3E">
+
 <style>
 :root{
   --red:#e3292e;
@@ -13,332 +17,597 @@
   --navy:#142335;
   --blue:#245c8e;
   --ink:#182432;
-  --muted:#667587;
-  --line:#e2e7ed;
-  --bg:#f4f6f9;
+  --muted:#718092;
+  --line:#e5eaf0;
+  --bg:#f5f7fa;
   --white:#fff;
-  --shadow:0 5px 20px #1423350c;
+  --shadow:0 4px 18px #1423350b;
+  --radius:15px;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:85px}
 body{
   margin:0;
   background:var(--bg);
   color:var(--ink);
-  font:15px/1.55 Inter,system-ui,Segoe UI,Arial,sans-serif;
+  font:14px/1.55 Inter,system-ui,Segoe UI,Arial,sans-serif;
 }
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
+a{color:inherit}
+[hidden]{display:none!important}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid #e3292e66;
+  outline-offset:3px;
+}
+
+/* Header */
 header{
-  background:#111b27;
-  color:white;
-  padding:12px max(18px,calc((100% - 1160px)/2));
+  height:72px;
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:#fff;
+  border-bottom:1px solid var(--line);
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  gap:20px;
-  box-shadow:0 3px 16px #101b2920;
-  position:relative;
-  z-index:10;
+  justify-content:space-between;
+  padding:0 max(22px,calc((100% - 1440px)/2));
+  gap:25px;
 }
 .brand{
   display:flex;
   align-items:center;
-  gap:10px;
-  color:white;
+  gap:11px;
   text-decoration:none;
   font-size:20px;
   font-weight:950;
-  letter-spacing:-.7px;
+  letter-spacing:-.8px;
+  white-space:nowrap;
 }
 .logo{
-  background:var(--red);
-  border-radius:11px;
-  width:42px;
-  height:42px;
+  width:43px;
+  height:43px;
+  border-radius:12px;
   display:grid;
   place-items:center;
-  box-shadow:inset 0 -3px #a9141b;
-  transition:transform .2s ease;
-}
-.brand:hover .logo{transform:rotate(-5deg)}
-nav{display:flex;gap:22px}
-nav a{
-  color:#dce4ec;
-  text-decoration:none;
-  font-size:13px;
-  font-weight:750;
-  transition:color .2s;
-}
-nav a:hover{color:white}
-main{
-  max-width:1160px;
-  margin:auto;
-  padding:30px 20px 70px;
-}
-.hero{
-  background:
-    radial-gradient(circle at 90% 10%,#ffffff18,transparent 32%),
-    linear-gradient(125deg,#142334,#244967);
-  color:white;
-  border-radius:22px;
-  padding:46px;
-  position:relative;
-  overflow:hidden;
-  box-shadow:0 12px 35px #14233520;
-}
-.kicker{
-  color:#ffcf55;
-  font-size:11px;
-  font-weight:950;
-  letter-spacing:1.7px;
-  text-transform:uppercase;
-}
-.hero h1{
-  font-size:clamp(36px,5vw,58px);
-  line-height:1.02;
-  letter-spacing:-2.5px;
-  margin:13px 0;
-  font-weight:950;
-}
-.hero p{color:#d2deea;max-width:590px}
-.search{
-  display:flex;
-  background:white;
-  border-radius:13px;
-  padding:6px;
-  max-width:760px;
-  margin-top:25px;
-  gap:5px;
-  box-shadow:0 8px 25px #00000020;
-}
-.search input{
-  border:0;
-  outline:0;
-  min-width:0;
-  flex:1;
-  padding:13px;
-  color:#17212b;
-  font-size:15px;
-}
-.search input:focus{outline:2px solid var(--red);border-radius:7px}
-.search button,.primary{
   background:var(--red);
   color:white;
-  border:0;
-  border-radius:9px;
-  padding:11px 20px;
-  font-weight:850;
-  transition:background .2s,transform .2s;
+  font-size:20px;
+  font-weight:1000;
+  letter-spacing:-1.5px;
+  box-shadow:inset 0 -3px #a9141b;
 }
-.search button:hover,.primary:hover{
-  background:var(--red-dark);
-  transform:translateY(-1px);
-}
-.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
-.quick button{
-  border:1px solid #ffffff55;
-  background:#ffffff12;
-  color:white;
-  border-radius:30px;
-  padding:7px 13px;
-  font-size:12px;
-  transition:background .2s;
-}
-.quick button:hover{background:#ffffff2b}
-.rowhead{
+.header-right{
   display:flex;
-  justify-content:space-between;
-  align-items:end;
-  margin:32px 0 15px;
+  align-items:center;
   gap:12px;
 }
-.rowhead h2{font-size:22px;margin:0;letter-spacing:-.5px}
-.rowhead h3{margin:0}
-.rowhead p{margin:3px 0 0;color:var(--muted);font-size:13px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap}
-.tab{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:9px;
-  padding:9px 14px;
-  font-size:13px;
-  font-weight:800;
-  color:#425164;
-  transition:all .2s;
+.header-note{
+  color:var(--muted);
+  font-size:12px;
 }
-.tab:hover{border-color:var(--blue);color:var(--blue)}
-.tab[aria-pressed=true]{
-  background:#172b3e;
-  color:white;
-  border-color:#172b3e;
-}
-.tab[aria-pressed=true]:hover{background:#244967}
-.status{
-  display:none;
-  margin:18px 0;
-  padding:12px 15px;
-  border-radius:10px;
+.header-button{
   background:#fff;
   border:1px solid var(--line);
-  font-size:13px;
+  border-radius:9px;
+  padding:8px 13px;
+  font-weight:800;
+  color:var(--ink);
 }
-.status.error{border-color:#f0b7b9;background:#fff5f5;color:#8b2025}
-.status.good{background:#f0faf4;border-color:#bde5ca;color:#205e39}
-.results{
+.header-button:hover{border-color:var(--red);color:var(--red)}
+
+/* Main layout */
+.app{
+  max-width:1440px;
+  margin:auto;
+  padding:25px 24px 65px;
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:15px;
-}
-.card{
-  background:white;
-  border:1px solid var(--line);
-  border-radius:14px;
-  overflow:hidden;
-  min-width:0;
-  box-shadow:var(--shadow);
-  transition:transform .2s,box-shadow .2s;
-}
-.card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 10px 25px #14233518;
-}
-.pic{
-  height:165px;
-  background:linear-gradient(145deg,#f2f5f7,#e8edf2);
-  display:grid;
-  place-items:center;
-  color:#7b8b9c;
-  font-size:45px;
-  border-bottom:1px solid var(--line);
-}
-.pic img{width:100%;height:100%;object-fit:contain;padding:12px}
-.body{padding:14px}
-.body h3{font-size:14px;margin:0 0 4px;line-height:1.4}
-.meta{font-size:11px;color:var(--muted)}
-.id{font-size:12px;font-weight:850;color:#34485d;margin-top:8px}
-.empty{
-  grid-column:1/-1;
-  background:white;
-  border:1px dashed #cbd4de;
-  border-radius:13px;
-  text-align:center;
-  padding:36px;
-  color:var(--muted);
-}
-.panels{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  margin-top:30px;
+  grid-template-columns:220px minmax(0,1fr);
+  gap:25px;
   align-items:start;
 }
-.panel{
-  background:white;
+.sidebar{
+  position:sticky;
+  top:96px;
+  background:#fff;
   border:1px solid var(--line);
-  border-radius:16px;
-  padding:23px;
+  border-radius:var(--radius);
+  padding:16px 12px;
+  box-shadow:var(--shadow);
+}
+.side-label{
+  padding:8px 11px;
+  color:#9aa5b2;
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:1.3px;
+  text-transform:uppercase;
+}
+.side-link{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  width:100%;
+  padding:11px;
+  border-radius:9px;
+  color:#536174;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:800;
+  transition:.18s;
+}
+.side-link:hover{background:#f5f7fa;color:var(--ink)}
+.side-link.active{background:#fff0f0;color:var(--red)}
+.side-icon{
+  width:22px;
+  text-align:center;
+  font-size:16px;
+}
+.side-divider{height:1px;background:var(--line);margin:12px 4px}
+.sidebar-note{
+  margin:14px 7px 4px;
+  padding:13px;
+  background:#f6f8fa;
+  border-radius:10px;
+  color:var(--muted);
+  font-size:11px;
+}
+.content{min-width:0}
+.page-section{scroll-margin-top:90px;margin-bottom:25px}
+.section-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:15px;
+  margin:0 0 15px;
+}
+.section-heading h2{
+  font-size:21px;
+  letter-spacing:-.6px;
+  margin:0;
+}
+.section-heading p{margin:3px 0 0;color:var(--muted);font-size:12px}
+.kicker{
+  color:var(--red);
+  font-size:10px;
+  font-weight:950;
+  letter-spacing:1.4px;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+
+/* Hero */
+.hero{
+  color:white;
+  background:
+    radial-gradient(circle at 90% 5%,#ffffff20,transparent 33%),
+    linear-gradient(125deg,#142335,#244967);
+  border-radius:20px;
+  padding:39px 40px;
+  box-shadow:0 12px 32px #14233519;
+  overflow:hidden;
+  position:relative;
+}
+.hero h1{
+  font-size:clamp(34px,4vw,53px);
+  line-height:1.04;
+  letter-spacing:-2.4px;
+  margin:10px 0;
+  font-weight:950;
+}
+.hero p{color:#d4e0eb;max-width:570px;margin:0}
+.hero .kicker{color:#ffcf55}
+.search{
+  display:flex;
+  max-width:720px;
+  gap:6px;
+  background:#fff;
+  border-radius:12px;
+  padding:6px;
+  margin-top:24px;
+  box-shadow:0 8px 25px #0002;
+}
+.search input{
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:0;
+  padding:12px;
+  color:var(--ink);
+  background:transparent;
+}
+.search input:focus{outline:2px solid #e3292e55;border-radius:7px}
+.primary{
+  background:var(--red);
+  color:white;
+  border:0;
+  border-radius:9px;
+  padding:10px 17px;
+  font-weight:850;
+  transition:.18s;
+}
+.primary:hover{background:var(--red-dark);transform:translateY(-1px)}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.quick button{
+  background:#ffffff13;
+  border:1px solid #ffffff55;
+  color:#fff;
+  padding:6px 12px;
+  border-radius:30px;
+  font-size:11px;
+  font-weight:750;
+}
+.quick button:hover{background:#ffffff2c}
+
+/* General cards */
+.panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:21px;
   box-shadow:var(--shadow);
   min-width:0;
 }
-.panel.dark{
-  background:linear-gradient(135deg,#142335,#244967);
-  color:white;
-  border:0;
-}
+.panel h2,.panel h3{margin-top:0}
 .panel p{color:var(--muted);font-size:13px}
-.panel.dark p{color:#c7d5e2}
-.panel h3{margin:0 0 7px}
-.panel h2{margin-top:0}
-.panel label{
-  display:block;
-  font-size:12px;
-  font-weight:800;
-  color:#425164;
-  margin:13px 0 5px;
+.panel.dark{
+  color:#fff;
+  border:0;
+  background:linear-gradient(130deg,#142335,#244967);
 }
-.panel input,.panel select,.panel textarea{
-  width:100%;
-  border:1px solid #d8e0e8;
-  border-radius:9px;
-  padding:11px 12px;
-  background:white;
-  color:var(--ink);
-  max-width:100%;
-}
-.panel textarea{resize:vertical}
-.panel input:focus,.panel select:focus,.panel textarea:focus{
-  outline:2px solid #245c8e35;
-  border-color:var(--blue);
-}
-.panel button{max-width:100%}
+.panel.dark p{color:#cfdae5}
+.panel.dark .kicker{color:#ffcf55}
 .pill{
-  display:inline-block;
-  border-radius:30px;
+  display:inline-flex;
+  align-items:center;
   background:#fce9e9;
   color:#a51e24;
   padding:5px 10px;
+  border-radius:30px;
   font-size:10px;
   font-weight:900;
 }
-#collectionDashboard h3{margin-top:20px}
-#collectionTotal{font-size:28px;font-weight:950}
-#collectionItems>div,#favoriteItems>div{
-  padding:13px;
+.status{
+  display:none;
+  padding:11px 14px;
+  margin:14px 0;
   border:1px solid var(--line);
-  border-radius:11px;
-  margin:10px 0;
+  background:white;
+  border-radius:10px;
+  font-size:12px;
+}
+.status.good{display:block;background:#effaf3;border-color:#bde5ca;color:#205e39}
+.status.error{display:block;background:#fff4f4;border-color:#f0b7b9;color:#8b2025}
+
+/* Catalog */
+.catalog-tools{
   background:#fff;
-}
-#collectionItems button,#favoriteItems button{
   border:1px solid var(--line);
-  background:#f5f7f9;
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:var(--shadow);
+  margin-bottom:15px;
+}
+.tabs{display:flex;gap:7px;flex-wrap:wrap}
+.tab{
+  border:1px solid var(--line);
+  background:#fff;
+  color:#536174;
+  border-radius:9px;
+  padding:9px 13px;
+  font-size:12px;
+  font-weight:850;
+}
+.tab:hover{border-color:var(--blue);color:var(--blue)}
+.tab[aria-pressed=true]{
+  background:var(--navy);
+  color:white;
+  border-color:var(--navy);
+}
+.filter-row{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px;
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px solid var(--line);
+}
+.filter-label{
+  color:var(--muted);
+  font-size:11px;
+  font-weight:850;
+}
+.filter-row select{
+  border:1px solid var(--line);
   border-radius:8px;
-  padding:7px 12px;
-  font-weight:750;
+  background:#fff;
+  padding:8px 10px;
+  color:var(--ink);
+  font-size:12px;
+  min-width:135px;
 }
-#collectionItems button:hover,#favoriteItems button:hover{
-  border-color:var(--red);
-  color:var(--red);
+.filter-row button{
+  border:0;
+  background:#f2f4f7;
+  color:#586678;
+  border-radius:8px;
+  padding:8px 11px;
+  font-size:11px;
+  font-weight:800;
 }
-#forumFeed article{
-  padding:19px;
+.filter-row button:hover{background:#fce9e9;color:var(--red)}
+.results-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:17px 0 12px;
+}
+.results-top h3{margin:0;font-size:16px}
+.results-top span{color:var(--muted);font-size:11px}
+.results{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:13px;
+}
+.card{
+  background:#fff;
   border:1px solid var(--line);
   border-radius:13px;
-  margin:13px 0;
-  background:white;
+  overflow:hidden;
+  min-width:0;
   box-shadow:var(--shadow);
+  transition:transform .18s,box-shadow .18s;
 }
-#forumFeed article h3{margin:8px 0}
-#forumFeed article p{white-space:pre-wrap}
-#forumFeed article button{margin-top:5px}
-#forumFeed input{min-width:0}
-#forumSort{max-width:150px}
-#profileEditor{
-  background:#f5f7f9;
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 24px #14233516}
+.pic{
+  height:155px;
+  background:linear-gradient(145deg,#f3f6f8,#e8edf2);
+  display:grid;
+  place-items:center;
+  color:#8795a4;
+  font-size:38px;
+  border-bottom:1px solid var(--line);
+}
+.pic img{width:100%;height:100%;object-fit:contain;padding:11px}
+.body{padding:12px}
+.body h3{font-size:13px;line-height:1.4;margin:0 0 5px}
+.meta{font-size:10px;color:var(--muted)}
+.id{font-size:11px;color:#3d5065;font-weight:850;margin-top:7px}
+.card-link{
+  display:block;
+  color:var(--blue);
+  font-size:10px;
+  font-weight:850;
+  margin-top:8px;
+  text-decoration:none;
+}
+.card-link:hover{text-decoration:underline}
+.favorite-button{
+  margin-top:10px;
+  width:100%;
+  border:1px solid var(--line);
+  background:#f8f9fb;
+  color:#536174;
+  border-radius:8px;
+  padding:7px;
+  font-size:10px;
+  font-weight:850;
+}
+.favorite-button:hover{border-color:var(--red);color:var(--red)}
+.empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:35px 20px;
+  background:#fff;
+  border:1px dashed #cbd4de;
+  border-radius:13px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+/* Collection dashboard */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin:17px 0;
+}
+.stat{
+  background:#f6f8fa;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:15px;
+  min-width:0;
+}
+.stat-label{
+  color:var(--muted);
+  font-size:10px;
+  font-weight:850;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.stat-value{font-size:23px;font-weight:950;letter-spacing:-.7px;margin-top:4px}
+.collection-layout{
+  display:grid;
+  grid-template-columns:minmax(260px,.8fr) minmax(0,1.5fr);
+  gap:15px;
+  align-items:start;
+}
+.form-card{
+  background:#f8f9fb;
   border:1px solid var(--line);
   border-radius:12px;
   padding:16px;
 }
+.form-card h3{font-size:15px;margin:0 0 5px}
+.field{margin-top:12px}
+.field label,.panel label{
+  display:block;
+  color:#536174;
+  font-size:11px;
+  font-weight:850;
+  margin-bottom:5px;
+}
+.field input,.field select,.field textarea,
+.panel input,.panel select,.panel textarea{
+  width:100%;
+  min-width:0;
+  border:1px solid #dce3ea;
+  border-radius:8px;
+  padding:10px 11px;
+  background:white;
+  color:var(--ink);
+}
+.field input:focus,.field select:focus,.field textarea:focus,
+.panel input:focus,.panel select:focus,.panel textarea:focus{
+  outline:2px solid #245c8e30;
+  border-color:var(--blue);
+}
+.field textarea{resize:vertical}
+.collection-list{min-width:0}
+.list-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 0 10px;
+}
+.list-heading h3{font-size:15px;margin:0}
+.list-heading span{font-size:11px;color:var(--muted)}
+#collectionItems>div,#favoriteItems>div{
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  margin:9px 0;
+  background:#fff;
+}
+#collectionItems p,#favoriteItems p{font-size:12px;margin:5px 0;color:var(--muted)}
+#collectionItems button,#favoriteItems button{
+  border:1px solid var(--line);
+  background:#f5f7f9;
+  border-radius:8px;
+  padding:7px 10px;
+  font-size:11px;
+  font-weight:800;
+}
+#collectionItems button:hover,#favoriteItems button:hover{border-color:var(--red);color:var(--red)}
+.subsection{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+.subsection h3{margin:0;font-size:15px}
+.subsection>p{margin:4px 0 12px}
+
+/* Profile */
+.profile-top{
+  display:flex;
+  align-items:center;
+  gap:17px;
+  padding:18px;
+  background:linear-gradient(120deg,#f7f9fb,#eef2f6);
+  border:1px solid var(--line);
+  border-radius:13px;
+  margin:15px 0;
+}
+.profile-avatar{
+  width:76px;
+  height:76px;
+  flex:0 0 76px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#dce4ec;
+  border:3px solid white;
+  box-shadow:0 2px 9px #0002;
+}
+.avatar-placeholder{
+  display:grid;
+  place-items:center;
+  color:#fff;
+  background:var(--navy);
+  font-size:27px;
+  font-weight:950;
+}
+.profile-top h3{margin:0;font-size:18px}
+.profile-top p{margin:3px 0 0;font-size:12px}
+.profile-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+.profile-box{
+  padding:16px;
+  border:1px solid var(--line);
+  border-radius:12px;
+}
+.profile-box h3{font-size:14px;margin:0 0 10px}
+#profileEditor{
+  background:#fff;
+  border:0;
+  padding:0;
+}
 #avatarPreview{
-  width:100px;
-  height:100px;
+  width:90px;
+  height:90px;
   object-fit:cover;
   border-radius:50%;
-  margin-top:12px;
+  margin-top:10px;
   border:3px solid white;
   box-shadow:0 2px 8px #0002;
 }
-#authForm{display:grid;gap:10px}
+#authForm{display:grid;gap:9px}
 #authForm input{width:100%}
+#authForm .tab{width:100%}
+.message{font-size:12px;color:var(--muted);min-height:18px}
+
+/* Forum */
+#forumFeed article{
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  margin:12px 0;
+  background:#fff;
+  box-shadow:var(--shadow);
+}
+#forumFeed article h3{margin:8px 0;font-size:17px}
+#forumFeed article p{white-space:pre-wrap}
+#forumFeed article button{margin-top:5px}
+#forumSort{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 10px;
+  background:#fff;
+  color:var(--ink);
+  font-size:11px;
+}
+#forumComposer{margin-top:15px}
+#forumComposer .field{margin-top:12px}
+#forumComposer textarea{min-height:110px}
+#forumFeed input{min-width:0}
+.forum-welcome{
+  background:#f7f9fb;
+  border:1px solid var(--line);
+  padding:13px;
+  border-radius:10px;
+}
+
+/* Price placeholder and footer */
+.price-note{
+  display:flex;
+  gap:15px;
+  align-items:center;
+}
+.price-icon{
+  width:48px;height:48px;flex:0 0 48px;
+  display:grid;place-items:center;
+  background:#ffffff19;border-radius:12px;font-size:23px;
+}
 footer{
   background:#111b27;
   color:#d7e0e8;
-  padding:30px 20px;
-  margin-top:20px;
+  padding:25px 20px;
 }
 .foot{
-  max-width:1160px;
+  max-width:1390px;
   margin:auto;
   display:flex;
   justify-content:space-between;
@@ -346,220 +615,396 @@ footer{
   flex-wrap:wrap;
 }
 .foot small{color:#aab6c2}
-[hidden]{display:none!important}
-button:focus-visible,a:focus-visible{
-  outline:3px solid var(--red);
-  outline-offset:3px;
-}
-@media(max-width:900px){
+
+@media(max-width:1100px){
   .results{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .collection-layout{grid-template-columns:1fr}
 }
-@media(max-width:800px){
-  nav{display:none}
+@media(max-width:760px){
+  header{height:auto;min-height:65px;padding:10px 15px}
+  .header-note{display:none}
+  .app{display:block;padding:14px 13px 45px}
+  .sidebar{
+    position:sticky;
+    top:65px;
+    z-index:15;
+    display:flex;
+    overflow-x:auto;
+    gap:4px;
+    padding:7px;
+    margin-bottom:16px;
+    border-radius:11px;
+    scrollbar-width:none;
+  }
+  .sidebar::-webkit-scrollbar{display:none}
+  .side-label,.side-divider,.sidebar-note{display:none}
+  .side-link{
+    flex:0 0 auto;
+    width:auto;
+    padding:9px 11px;
+    white-space:nowrap;
+    font-size:11px;
+  }
+  .side-icon{width:auto}
+  .hero{padding:29px 23px;border-radius:16px}
+  .hero h1{letter-spacing:-1.7px}
   .results{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .panels{grid-template-columns:1fr}
-  .hero{padding:32px 24px}
+  .profile-grid{grid-template-columns:1fr}
 }
 @media(max-width:430px){
-  main{padding:16px 12px 45px}
-  .results{gap:9px}
-  .pic{height:125px}
-  .body{padding:10px}
-  .search button{padding:0 13px}
-  .hero{border-radius:16px}
-  .hero h1{letter-spacing:-1.8px}
-  .panel{padding:17px}
-  .rowhead{align-items:start}
+  .brand{font-size:17px}
+  .logo{width:38px;height:38px}
+  .header-button{font-size:11px;padding:7px 9px}
+  .app{padding-left:10px;padding-right:10px}
+  .hero{padding:25px 18px}
+  .hero h1{font-size:36px}
+  .search button{padding:9px 12px}
+  .results{gap:8px}
+  .pic{height:120px}
+  .body{padding:9px}
+  .stats{gap:7px}
+  .stat{padding:10px}
+  .stat-value{font-size:19px}
+  .panel{padding:15px}
+  .section-heading{align-items:flex-start}
 }
 </style>
 </head>
-<body>
 
+<body>
 <header>
-  <a class="brand" href="/"><span class="logo">GP</span>GPBrickSearch</a>
-  <nav>
-    <a href="#search">Search</a>
-    <a href="#catalog">Catalog</a>
-    <a href="#prices">Price Guide</a>
-    <a href="#collection">My Collection</a>
-    <a href="#forum">Forum</a>
-  </nav>
+  <a class="brand" href="#search" aria-label="GPBrickSearch home">
+    <span class="logo">GP</span>
+    <span>GPBrickSearch</span>
+  </a>
+  <div class="header-right">
+    <span class="header-note">Everything LEGO. One Search.</span>
+    <button class="header-button" type="button" onclick="document.querySelector('#account').scrollIntoView({behavior:'smooth'})">My Account</button>
+  </div>
 </header>
 
-<main>
-<section class="hero" id="search">
-  <div class="kicker">The LEGO discovery engine</div>
-  <h1>Everything LEGO.<br>One Search.</h1>
-  <p>Find minifigures, sets and parts. Explore the catalog and discover your next collectible.</p>
-  <form class="search" id="searchForm">
-    <input id="query" placeholder="Try a name, set number or part number…" autocomplete="off" required>
-    <button type="submit">Search</button>
-  </form>
-  <div class="quick">
-    <button type="button" data-q="Batman">Batman</button>
-    <button type="button" data-q="75192">75192</button>
-    <button type="button" data-q="3001">3001</button>
-    <button type="button" data-q="Star Wars">Star Wars</button>
-  </div>
-</section>
+<div class="app">
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="side-label">Workspace</div>
+    <a class="side-link active" href="#search"><span class="side-icon">⌕</span> Search</a>
+    <a class="side-link" href="#catalog"><span class="side-icon">▦</span> Catalog</a>
+    <a class="side-link" href="#collection"><span class="side-icon">▣</span> My Collection</a>
+    <a class="side-link" href="#account"><span class="side-icon">◉</span> My Profile</a>
+    <a class="side-link" href="#forum"><span class="side-icon">💬</span> GPBrickTalk</a>
+    <div class="side-divider"></div>
+    <div class="side-label">Collector tools</div>
+    <a class="side-link" href="#prices"><span class="side-icon">↗</span> Price Guide</a>
+    <div class="sidebar-note">Your LEGO collection, catalog searches, and community discussions—all in one place.</div>
+  </aside>
 
-<section id="catalog">
-  <div class="rowhead">
-    <div><h2>Search the catalog</h2><p>Choose what you want to find.</p></div>
-    <span class="pill" id="apiState">Checking API…</span>
-  </div>
-  <div class="tabs" role="group" aria-label="Catalog category">
-    <button class="tab" data-type="sets" aria-pressed="true">LEGO Sets</button>
-    <button class="tab" data-type="minifigs" aria-pressed="false">Minifigures</button>
-    <button class="tab" data-type="parts" aria-pressed="false">Bricks & Parts</button>
-  </div>
-  <div class="status" id="status" role="status" aria-live="polite"></div>
-  <div class="rowhead">
-    <div><h2 id="resultsTitle">Explore LEGO sets</h2><p id="resultsHint">Search above to load live Rebrickable catalog results.</p></div>
-  </div>
-  <div class="results" id="results">
-    <div class="empty">Your search results will appear here once you search the catalog.</div>
-  </div>
-</section>
+  <main class="content">
 
-<section class="panels" id="prices">
-  <div class="panel dark">
-    <div class="kicker">Collector tools</div>
-    <h3>Price comparisons & history</h3>
-    <p>Marketplace prices and historical trends are planned for a later integration. Rebrickable does not provide pricing data, so GPBrickSearch will connect to separate permitted sources.</p>
-  </div>
-
-  <div class="panel" id="collection">
-    <div class="kicker" style="color:#b51f27">Your personal LEGO library</div>
-    <h3>My LEGO Collection</h3>
-    <p>Add and manage the LEGO sets, minifigures, and parts you own.</p>
-
-    <div id="collectionLoggedOut">
-      <p>Log in to view and manage your collection.</p>
-    </div>
-
-    <div id="collectionDashboard" hidden>
-      <h3>Add an item</h3>
-      <form id="collectionForm">
-        <label for="collectionType">Item type</label>
-        <select id="collectionType" required>
-          <option value="sets">LEGO Set</option>
-          <option value="minifigs">Minifigure</option>
-          <option value="parts">Brick or Part</option>
-        </select>
-
-        <label for="collectionId">Set number or item ID</label>
-        <input id="collectionId" required placeholder="Example: 75192">
-
-        <label for="collectionName">Item name</label>
-        <input id="collectionName" required placeholder="Example: Millennium Falcon">
-
-        <label for="collectionQuantity">Quantity</label>
-        <input id="collectionQuantity" type="number" min="1" value="1" required>
-
-        <label for="collectionCondition">Condition</label>
-        <select id="collectionCondition">
-          <option value="New">New</option>
-          <option value="Used">Used</option>
-          <option value="Incomplete">Incomplete</option>
-        </select>
-
-        <label for="collectionNotes">Notes (optional)</label>
-        <input id="collectionNotes" placeholder="Any extra details">
-
-        <label for="collectionValue">Estimated Value ($)</label>
-        <input id="collectionValue" type="number" min="0" step="0.01" placeholder="Example: 249.99">
-
-        <button class="primary" type="submit" style="margin-top:12px">Add to My Collection</button>
+    <!-- SEARCH -->
+    <section class="hero page-section" id="search">
+      <div class="kicker">The LEGO discovery engine</div>
+      <h1>Everything LEGO.<br>One Search.</h1>
+      <p>Find minifigures, sets and parts. Explore the catalog and discover your next collectible.</p>
+      <form class="search" id="searchForm">
+        <input id="query" placeholder="Try a name, set number or part number…" autocomplete="off" required>
+        <button type="submit" class="primary">Search</button>
       </form>
+      <div class="quick">
+        <button type="button" data-q="Batman">Batman</button>
+        <button type="button" data-q="75192">75192</button>
+        <button type="button" data-q="3001">3001</button>
+        <button type="button" data-q="Star Wars">Star Wars</button>
+      </div>
+    </section>
 
-      <p id="collectionMessage" role="status"></p>
-
-      <div style="background:#142335;color:white;padding:16px;border-radius:12px;margin-top:20px">
-        <div style="font-size:12px;color:#c7d5e2">TOTAL ESTIMATED COLLECTION VALUE</div>
-        <div id="collectionTotal">$0.00</div>
+    <!-- CATALOG -->
+    <section class="page-section" id="catalog">
+      <div class="section-heading">
+        <div>
+          <div class="kicker">Explore the database</div>
+          <h2>LEGO Catalog</h2>
+          <p>Choose a category, search, and organize your results.</p>
+        </div>
+        <span class="pill" id="apiState">Checking API…</span>
       </div>
 
-      <h3 style="margin-top:24px">My Items</h3>
-      <div id="collectionItems"><p>Your collection will appear here.</p></div>
+      <div class="catalog-tools">
+        <div class="tabs" role="group" aria-label="Catalog category">
+          <button class="tab" data-type="sets" aria-pressed="true">🧱 LEGO Sets</button>
+          <button class="tab" data-type="minifigs" aria-pressed="false">🙂 Minifigures</button>
+          <button class="tab" data-type="parts" aria-pressed="false">🔩 Bricks & Parts</button>
+        </div>
+        <div class="filter-row">
+          <span class="filter-label">SORT BY</span>
+          <select id="sortResults" aria-label="Sort catalog results">
+            <option value="default">Relevance</option>
+            <option value="nameAsc">Name: A to Z</option>
+            <option value="nameDesc">Name: Z to A</option>
+            <option value="yearDesc">Newest year</option>
+            <option value="yearAsc">Oldest year</option>
+            <option value="partsDesc">Most parts</option>
+            <option value="partsAsc">Fewest parts</option>
+          </select>
+          <span class="filter-label">YEAR</span>
+          <select id="yearFilter" aria-label="Filter by year">
+            <option value="all">All years</option>
+          </select>
+          <button type="button" id="clearFilters">Reset filters</button>
+        </div>
+      </div>
 
-      <h3 style="margin-top:28px">❤️ My Favorites</h3>
-      <p>Your saved LEGO sets, minifigures, and parts.</p>
-      <div id="favoriteItems"><p>Your favorites will appear here.</p></div>
-    </div>
-  </div>
-</section>
+      <div class="status" id="status" role="status" aria-live="polite"></div>
+      <div class="results-top">
+        <div>
+          <h3 id="resultsTitle">Explore LEGO sets</h3>
+          <span id="resultsHint">Search above to load live Rebrickable catalog results.</span>
+        </div>
+        <span id="resultCount"></span>
+      </div>
+      <div class="results" id="results">
+        <div class="empty">Your search results will appear here once you search the catalog.</div>
+      </div>
+    </section>
 
-<section class="panel" id="forum" style="margin-bottom:20px">
-  <div class="kicker" style="color:#b51f27">The LEGO community</div>
-  <h2>GPBrickTalk 🧱</h2>
-  <p>Share your builds, discuss LEGO news, ask questions and connect with other LEGO fans.</p>
+    <!-- COLLECTION -->
+    <section class="page-section" id="collection">
+      <div class="section-heading">
+        <div>
+          <div class="kicker">Your personal LEGO library</div>
+          <h2>My Collection</h2>
+          <p>Keep track of the sets, minifigures, and parts you own.</p>
+        </div>
+        <span class="pill">Collector dashboard</span>
+      </div>
 
-  <div id="forumLoggedOut">
-    <p>Log in to create posts, comment and vote. Everyone can browse discussions.</p>
-  </div>
+      <div class="panel">
+        <div id="collectionLoggedOut">
+          <div class="forum-welcome">
+            <strong>Your collection is waiting for you.</strong>
+            <p>Log in to add LEGO items, manage your collection, and save favorites.</p>
+            <button class="primary" type="button" onclick="document.querySelector('#account').scrollIntoView({behavior:'smooth'})">Go to My Account</button>
+          </div>
+        </div>
 
-  <div id="forumComposer" hidden>
-    <h3>Create a discussion</h3>
-    <form id="forumPostForm">
-      <label for="forumCategory">Category</label>
-      <select id="forumCategory" required>
-        <option>General</option>
-        <option>LEGO Sets</option>
-        <option>Minifigures</option>
-        <option>MOCs & Builds</option>
-        <option>LEGO News</option>
-        <option>Questions</option>
-      </select>
-      <label for="forumTitle">Post title</label>
-      <input id="forumTitle" maxlength="160" minlength="5" placeholder="What would you like to discuss?" required>
-      <label for="forumBody">Your post</label>
-      <textarea id="forumBody" maxlength="10000" rows="4" placeholder="Share your thoughts with the community..." required></textarea>
-      <button class="primary" type="submit" style="margin-top:12px">Publish Discussion</button>
-    </form>
-    <p id="forumMessage" role="status"></p>
-  </div>
+        <div id="collectionDashboard" hidden>
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-label">Items in collection</div>
+              <div class="stat-value" id="collectionCount">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Total quantity</div>
+              <div class="stat-value" id="collectionQuantityTotal">0</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Estimated value</div>
+              <div class="stat-value" id="collectionTotal">$0.00</div>
+            </div>
+          </div>
 
-  <div class="rowhead">
-    <div><h3>Community Discussions</h3><p>See what LEGO fans are talking about.</p></div>
-    <select id="forumSort" aria-label="Sort discussions">
-      <option value="new">Newest</option>
-      <option value="top">Top Rated</option>
-    </select>
-  </div>
-  <div id="forumFeed"><p>Loading discussions...</p></div>
-</section>
+          <div class="collection-layout">
+            <div class="form-card">
+              <h3>＋ Add an item</h3>
+              <p>Add something to your personal LEGO library.</p>
+              <form id="collectionForm">
+                <div class="field">
+                  <label for="collectionType">Item type</label>
+                  <select id="collectionType" required>
+                    <option value="sets">LEGO Set</option>
+                    <option value="minifigs">Minifigure</option>
+                    <option value="parts">Brick or Part</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="collectionId">Set number or item ID</label>
+                  <input id="collectionId" required placeholder="Example: 75192">
+                </div>
+                <div class="field">
+                  <label for="collectionName">Item name</label>
+                  <input id="collectionName" required placeholder="Example: Millennium Falcon">
+                </div>
+                <div class="field">
+                  <label for="collectionQuantity">Quantity</label>
+                  <input id="collectionQuantity" type="number" min="1" value="1" required>
+                </div>
+                <div class="field">
+                  <label for="collectionCondition">Condition</label>
+                  <select id="collectionCondition">
+                    <option value="New">New</option>
+                    <option value="Used">Used</option>
+                    <option value="Incomplete">Incomplete</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="collectionNotes">Notes (optional)</label>
+                  <textarea id="collectionNotes" rows="2" placeholder="Any extra details"></textarea>
+                </div>
+                <div class="field">
+                  <label for="collectionValue">Estimated value ($)</label>
+                  <input id="collectionValue" type="number" min="0" step="0.01" placeholder="Optional">
+                </div>
+                <button class="primary" type="submit" style="width:100%;margin-top:15px">Add to My Collection</button>
+              </form>
+              <p class="message" id="collectionMessage" role="status"></p>
+            </div>
 
-<section class="panel" id="account" style="margin-bottom:20px">
-  <h2>My GPBrickSearch Account</h2>
-  <p>Create an account or sign in to manage your LEGO collection.</p>
+            <div class="collection-list">
+              <div class="list-heading">
+                <h3>My Items</h3>
+                <span>Your saved collection</span>
+              </div>
+              <div id="collectionItems"><p>Your collection will appear here.</p></div>
 
-  <form id="authForm">
-    <input id="profileUsername" type="text" placeholder="Choose a username" maxlength="30">
-    <input id="authEmail" type="email" placeholder="Email address" required>
-    <input id="authPassword" type="password" placeholder="Password (at least 6 characters)" minlength="6" required>
-    <button class="primary" type="submit" id="loginButton">Log In</button>
-    <button class="tab" type="button" id="signupButton">Create Account</button>
-  </form>
+              <div class="subsection">
+                <div class="list-heading">
+                  <h3>❤️ My Favorites</h3>
+                  <span>Saved catalog items</span>
+                </div>
+                <p>Your favorite LEGO sets, minifigures, and parts.</p>
+                <div id="favoriteItems"><p>Your favorites will appear here.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <div id="profileEditor" hidden style="margin-top:20px">
-    <h3>My Profile</h3>
-    <div style="margin:15px 0">
-      <label for="avatarUpload">My Profile Picture</label>
-      <input id="avatarUpload" type="file" accept="image/png,image/jpeg,image/webp">
-      <img id="avatarPreview" alt="Your profile picture" hidden>
-      <button class="primary" type="button" id="uploadAvatarButton" style="margin-top:10px">Upload Profile Picture</button>
-      <p id="avatarMessage" role="status"></p>
-    </div>
-    <label for="savedUsername">My Username</label>
-    <input id="savedUsername" type="text" maxlength="30" placeholder="Choose your username">
-    <button class="primary" type="button" id="saveUsernameButton" style="margin-top:10px">Save Username</button>
-    <p id="profileMessage" role="status"></p>
-  </div>
-  <p id="authMessage" role="status"></p>
-  <button class="tab" type="button" id="logoutButton" hidden>Log Out</button>
-</section>
-</main>
+    <!-- PROFILE / ACCOUNT -->
+    <section class="page-section" id="account">
+      <div class="section-heading">
+        <div>
+          <div class="kicker">Your account</div>
+          <h2>My Profile</h2>
+          <p>Manage your GPBrickSearch account and profile picture.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div id="accountLoggedOut">
+          <h3>Welcome to GPBrickSearch</h3>
+          <p>Log in or create an account to manage your collection and participate in GPBrickTalk.</p>
+          <form id="authForm">
+            <input id="profileUsername" type="text" placeholder="Choose a username" maxlength="30">
+            <input id="authEmail" type="email" placeholder="Email address" required>
+            <input id="authPassword" type="password" placeholder="Password (at least 6 characters)" minlength="6" required>
+            <button class="primary" type="submit" id="loginButton">Log In</button>
+            <button class="tab" type="button" id="signupButton">Create Account</button>
+          </form>
+          <p class="message" id="authMessage" role="status"></p>
+        </div>
+
+        <div id="accountLoggedIn" hidden>
+          <div class="profile-top">
+            <div id="profileAvatarPlaceholder" class="profile-avatar avatar-placeholder">GP</div>
+            <img id="profileAvatarLarge" class="profile-avatar" alt="Your profile picture" hidden>
+            <div>
+              <div class="kicker">Your GPBrickSearch profile</div>
+              <h3 id="profileDisplayName">LEGO Member</h3>
+              <p id="profileEmailDisplay"></p>
+            </div>
+          </div>
+
+          <div id="profileEditor">
+            <div class="profile-grid">
+              <div class="profile-box">
+                <h3>Profile picture</h3>
+                <p>Upload a picture to personalize your profile and forum posts.</p>
+                <label for="avatarUpload">Choose an image</label>
+                <input id="avatarUpload" type="file" accept="image/png,image/jpeg,image/webp">
+                <img id="avatarPreview" alt="Your profile picture preview" hidden>
+                <button class="primary" type="button" id="uploadAvatarButton" style="margin-top:12px">Upload Profile Picture</button>
+                <p class="message" id="avatarMessage" role="status"></p>
+              </div>
+              <div class="profile-box">
+                <h3>Username</h3>
+                <p>This is the name other members will see in GPBrickTalk.</p>
+                <label for="savedUsername">My Username</label>
+                <input id="savedUsername" type="text" maxlength="30" placeholder="Choose your username">
+                <button class="primary" type="button" id="saveUsernameButton" style="margin-top:12px">Save Username</button>
+                <p class="message" id="profileMessage" role="status"></p>
+              </div>
+            </div>
+          </div>
+          <button class="tab" type="button" id="logoutButton" style="margin-top:18px">Log Out</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORUM -->
+    <section class="page-section" id="forum">
+      <div class="section-heading">
+        <div>
+          <div class="kicker">The LEGO community</div>
+          <h2>GPBrickTalk 🧱</h2>
+          <p>Share your builds, discuss LEGO news, ask questions, and connect.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div id="forumLoggedOut" class="forum-welcome">
+          <strong>Join the conversation.</strong>
+          <p>Log in to create posts, comment, and vote. Everyone can browse discussions.</p>
+          <button class="primary" type="button" onclick="document.querySelector('#account').scrollIntoView({behavior:'smooth'})">Log In or Sign Up</button>
+        </div>
+
+        <div id="forumComposer" hidden>
+          <h3>Create a discussion</h3>
+          <form id="forumPostForm">
+            <div class="field">
+              <label for="forumCategory">Category</label>
+              <select id="forumCategory" required>
+                <option>General</option>
+                <option>LEGO Sets</option>
+                <option>Minifigures</option>
+                <option>MOCs & Builds</option>
+                <option>LEGO News</option>
+                <option>Questions</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="forumTitle">Post title</label>
+              <input id="forumTitle" maxlength="160" minlength="5" placeholder="What would you like to discuss?" required>
+            </div>
+            <div class="field">
+              <label for="forumBody">Your post</label>
+              <textarea id="forumBody" maxlength="10000" rows="4" placeholder="Share your thoughts with the community..." required></textarea>
+            </div>
+            <button class="primary" type="submit" style="margin-top:12px">Publish Discussion</button>
+          </form>
+          <p class="message" id="forumMessage" role="status"></p>
+        </div>
+
+        <div class="subsection">
+          <div class="list-heading">
+            <div>
+              <h3>Community Discussions</h3>
+              <p>See what LEGO fans are talking about.</p>
+            </div>
+            <select id="forumSort" aria-label="Sort discussions">
+              <option value="new">Newest</option>
+              <option value="top">Top Rated</option>
+            </select>
+          </div>
+          <div id="forumFeed"><p>Loading discussions...</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICE GUIDE PLACEHOLDER -->
+    <section class="page-section" id="prices">
+      <div class="panel dark">
+        <div class="price-note">
+          <div class="price-icon">↗</div>
+          <div>
+            <div class="kicker">Collector tools</div>
+            <h3 style="margin:0">Price comparisons & history</h3>
+            <p style="margin:5px 0 0">Marketplace prices and historical trends are planned for a later integration. This feature will be added when we're ready to connect a suitable pricing source.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
 
 <footer>
   <div class="foot">
@@ -571,10 +1016,10 @@ button:focus-visible,a:focus-visible{
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 let selectedType="sets";
+let allResults=[];
 
 const SUPABASE_URL="https://juvvwyrfbexkdtothixw.supabase.co";
 const SUPABASE_KEY="sb_publishable_SeYFUHZAKA9tvy2IHjZzDw__7T9dReA";
-
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const labels={sets:"LEGO sets",minifigs:"minifigures",parts:"bricks & parts"};
 const $=s=>document.querySelector(s);
@@ -596,7 +1041,10 @@ function setType(type){
 }
 
 document.querySelectorAll("[data-type]").forEach(b=>{
-  b.addEventListener("click",()=>setType(b.dataset.type));
+  b.addEventListener("click",()=>{
+    setType(b.dataset.type);
+    if($("#query").value.trim())$("#searchForm").requestSubmit();
+  });
 });
 
 document.querySelectorAll("[data-q]").forEach(b=>{
@@ -618,10 +1066,54 @@ async function checkHealth(){
   }
 }
 
+function updateYearFilter(items){
+  const select=$("#yearFilter");
+  const current=select.value;
+  const years=[...new Set(items.map(x=>Number(x.year)).filter(x=>Number.isFinite(x)&&x>0))].sort((a,b)=>b-a);
+  select.replaceChildren();
+  const all=document.createElement("option");
+  all.value="all";
+  all.textContent="All years";
+  select.appendChild(all);
+  years.forEach(year=>{
+    const option=document.createElement("option");
+    option.value=String(year);
+    option.textContent=String(year);
+    select.appendChild(option);
+  });
+  if(years.includes(Number(current)))select.value=current;
+}
+
+function applyResultFilters(){
+  let items=[...allResults];
+  const year=$("#yearFilter").value;
+  const sort=$("#sortResults").value;
+
+  if(year!=="all")items=items.filter(item=>String(item.year)===year);
+
+  if(sort==="nameAsc")items.sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+  if(sort==="nameDesc")items.sort((a,b)=>(b.name||"").localeCompare(a.name||""));
+  if(sort==="yearDesc")items.sort((a,b)=>(Number(b.year)||0)-(Number(a.year)||0));
+  if(sort==="yearAsc")items.sort((a,b)=>(Number(a.year)||9999)-(Number(b.year)||9999));
+  if(sort==="partsDesc")items.sort((a,b)=>(Number(b.numParts)||0)-(Number(a.numParts)||0));
+  if(sort==="partsAsc")items.sort((a,b)=>(Number(a.numParts)||0)-(Number(b.numParts)||0));
+
+  render(items);
+  $("#resultCount").textContent=items.length+" shown";
+}
+
+$("#sortResults").addEventListener("change",applyResultFilters);
+$("#yearFilter").addEventListener("change",applyResultFilters);
+$("#clearFilters").addEventListener("click",()=>{
+  $("#sortResults").value="default";
+  $("#yearFilter").value="all";
+  applyResultFilters();
+});
+
 function render(items){
   const grid=$("#results");
   if(!items.length){
-    grid.innerHTML='<div class="empty">No matching results found. Try another search term.</div>';
+    grid.innerHTML='<div class="empty">No matching results found. Try another search or change your filters.</div>';
     return;
   }
   grid.replaceChildren();
@@ -632,7 +1124,6 @@ function render(items){
 
     const pic=document.createElement("div");
     pic.className="pic";
-
     if(item.image){
       const img=document.createElement("img");
       img.loading="lazy";
@@ -656,7 +1147,6 @@ function render(items){
     const id=document.createElement("div");
     id.className="id";
     id.textContent=item.id||"Catalog item";
-
     body.append(heading,meta,id);
 
     if(item.url){
@@ -664,15 +1154,14 @@ function render(items){
       link.href=item.url;
       link.target="_blank";
       link.rel="noopener noreferrer";
-      link.style.cssText="display:block;margin-top:8px;font-size:11px;color:#245c8e;font-weight:800";
+      link.className="card-link";
       link.textContent="View Rebrickable ↗";
       body.appendChild(link);
     }
 
     const favoriteButton=document.createElement("button");
     favoriteButton.type="button";
-    favoriteButton.className="tab";
-    favoriteButton.style.marginTop="10px";
+    favoriteButton.className="favorite-button";
     favoriteButton.textContent="❤️ Add to Favorites";
     favoriteButton.addEventListener("click",()=>saveFavorite(item));
     body.appendChild(favoriteButton);
@@ -690,6 +1179,7 @@ $("#searchForm").addEventListener("submit",async e=>{
   showStatus("Searching Rebrickable…");
   $("#results").innerHTML='<div class="empty">Loading catalog results…</div>';
   $("#resultsHint").textContent=`Searching ${labels[selectedType]} for “${q}”.`;
+  $("#resultCount").textContent="";
 
   try{
     const response=await fetch(`/api/search?q=${encodeURIComponent(q)}&type=${encodeURIComponent(selectedType)}&page_size=24`);
@@ -701,8 +1191,12 @@ $("#searchForm").addEventListener("submit",async e=>{
       return;
     }
 
-    render(data.results||[]);
-    showStatus(`${(data.results||[]).length} results shown · ${data.count??0} total catalog matches.`,"good");
+    allResults=data.results||[];
+    updateYearFilter(allResults);
+    $("#sortResults").value="default";
+    $("#yearFilter").value="all";
+    applyResultFilters();
+    showStatus(`${allResults.length} results shown · ${data.count??0} total catalog matches.`,"good");
   }catch{
     showStatus("Could not reach GPBrickSearch. Make sure the server is running.","error");
     $("#results").innerHTML='<div class="empty">Server connection unavailable.</div>';
@@ -711,11 +1205,11 @@ $("#searchForm").addEventListener("submit",async e=>{
 
 checkHealth();
 
+/* Authentication and profile */
 const authForm=$("#authForm");
 const signupButton=$("#signupButton");
 const logoutButton=$("#logoutButton");
 const authMessage=$("#authMessage");
-const profileEditor=$("#profileEditor");
 const savedUsername=$("#savedUsername");
 const profileMessage=$("#profileMessage");
 const saveUsernameButton=$("#saveUsernameButton");
@@ -802,7 +1296,10 @@ saveUsernameButton.addEventListener("click",async()=>{
     ?"Could not save username: "+error.message
     :"Username saved successfully! 🎉";
 
-  if(!error)await loadForum();
+  if(!error){
+    $("#profileDisplayName").textContent=username;
+    await loadForum();
+  }
 });
 
 authForm.addEventListener("submit",async event=>{
@@ -840,6 +1337,51 @@ logoutButton.addEventListener("click",async()=>{
   authMessage.textContent=error?error.message:"You are logged out.";
 });
 
+async function updateProfileUI(session){
+  $("#accountLoggedOut").hidden=Boolean(session);
+  $("#accountLoggedIn").hidden=!session;
+
+  if(!session){
+    savedUsername.value="";
+    avatarPreview.hidden=true;
+    avatarPreview.removeAttribute("src");
+    return;
+  }
+
+  $("#profileEmailDisplay").textContent=session.user.email||"";
+  const {data,error}=await supabaseClient.from("profiles")
+    .select("username, avatar_url")
+    .eq("id",session.user.id)
+    .single();
+
+  if(error){
+    profileMessage.textContent="Could not load profile: "+error.message;
+    $("#profileDisplayName").textContent=session.user.user_metadata?.username||"LEGO Member";
+    return;
+  }
+
+  const username=data.username||session.user.user_metadata?.username||"LEGO Member";
+  savedUsername.value=data.username||"";
+  $("#profileDisplayName").textContent=username;
+  $("#profileAvatarPlaceholder").textContent=username.charAt(0).toUpperCase()||"G";
+
+  if(data.avatar_url){
+    const url=data.avatar_url+"?t="+Date.now();
+    avatarPreview.src=url;
+    avatarPreview.hidden=false;
+    $("#profileAvatarLarge").src=url;
+    $("#profileAvatarLarge").hidden=false;
+    $("#profileAvatarPlaceholder").hidden=true;
+  }else{
+    avatarPreview.hidden=true;
+    avatarPreview.removeAttribute("src");
+    $("#profileAvatarLarge").hidden=true;
+    $("#profileAvatarLarge").removeAttribute("src");
+    $("#profileAvatarPlaceholder").hidden=false;
+  }
+}
+
+/* Collection */
 async function updateCollectionUI(session){
   $("#collectionLoggedOut").hidden=Boolean(session);
   $("#collectionDashboard").hidden=!session;
@@ -866,18 +1408,22 @@ async function loadCollection(userId){
 
   itemsDiv.replaceChildren();
 
-  const totalValue=(data||[]).reduce((total,item)=>{
+  const items=data||[];
+  const totalValue=items.reduce((total,item)=>{
     return total+(Number(item.estimated_value)||0)*(Number(item.quantity)||1);
   },0);
+  const totalQuantity=items.reduce((total,item)=>total+(Number(item.quantity)||1),0);
 
   $("#collectionTotal").textContent="$"+totalValue.toFixed(2);
+  $("#collectionCount").textContent=items.length;
+  $("#collectionQuantityTotal").textContent=totalQuantity;
 
-  if(!data||data.length===0){
+  if(items.length===0){
     itemsDiv.textContent="Your collection is empty. Add your first LEGO item!";
     return;
   }
 
-  data.forEach(item=>{
+  items.forEach(item=>{
     const card=document.createElement("div");
     const name=document.createElement("strong");
     name.textContent=item.item_name;
@@ -896,7 +1442,7 @@ async function loadCollection(userId){
 
     const remove=document.createElement("button");
     remove.type="button";
-    remove.textContent="Remove";
+    remove.textContent="Remove item";
     remove.addEventListener("click",async()=>{
       const {error}=await supabaseClient.from("collection").delete()
         .eq("id",item.id).eq("user_id",userId);
@@ -912,8 +1458,6 @@ async function loadCollection(userId){
 
 async function loadFavorites(userId){
   const favoritesDiv=$("#favoriteItems");
-  if(!favoritesDiv)return;
-
   favoritesDiv.textContent="Loading your favorites...";
 
   const {data,error}=await supabaseClient.from("favorites")
@@ -944,7 +1488,6 @@ async function loadFavorites(userId){
     const remove=document.createElement("button");
     remove.type="button";
     remove.textContent="Remove from Favorites";
-
     remove.addEventListener("click",async()=>{
       const {error}=await supabaseClient.from("favorites").delete()
         .eq("id",item.id).eq("user_id",userId);
@@ -968,7 +1511,7 @@ async function saveFavorite(item){
 
   const {error}=await supabaseClient.from("favorites").insert({
     user_id:session.user.id,
-    item_type:item.category,
+    item_type:item.category||selectedType,
     item_id:String(item.id),
     item_name:item.name,
     image_url:item.image||null
@@ -1019,6 +1562,7 @@ $("#collectionForm").addEventListener("submit",async event=>{
   await loadCollection(session.user.id);
 });
 
+/* GPBrickTalk */
 async function loadForum(){
   const feed=$("#forumFeed");
   const sort=$("#forumSort").value;
@@ -1055,7 +1599,6 @@ async function loadForum(){
   ])];
 
   let commentProfiles=[];
-
   if(forumUserIds.length){
     const {data:profiles,error:profileError}=await supabaseClient.from("profiles")
       .select("id, username, avatar_url")
@@ -1065,7 +1608,6 @@ async function loadForum(){
       feed.textContent="Could not load user profiles: "+profileError.message;
       return;
     }
-
     commentProfiles=profiles||[];
   }
 
@@ -1095,7 +1637,7 @@ async function loadForum(){
 
     const category=document.createElement("div");
     category.textContent=post.category;
-    category.style.cssText="font-size:11px;font-weight:900;color:#b51f27;text-transform:uppercase";
+    category.style.cssText="font-size:10px;font-weight:900;color:#b51f27;text-transform:uppercase;letter-spacing:.7px";
 
     const postProfile=profileById[post.user_id];
     const postAuthorRow=document.createElement("div");
@@ -1103,18 +1645,18 @@ async function loadForum(){
 
     const postUsername=document.createElement("strong");
     postUsername.textContent=postProfile?.username||"LEGO Member";
-    postUsername.style.fontSize="13px";
+    postUsername.style.fontSize="12px";
 
     if(postProfile?.avatar_url){
       const postAvatar=document.createElement("img");
       postAvatar.src=postProfile.avatar_url;
       postAvatar.alt="";
-      postAvatar.style.cssText="width:40px;height:40px;border-radius:50%;object-fit:cover;background:#dce4ec";
+      postAvatar.style.cssText="width:38px;height:38px;border-radius:50%;object-fit:cover;background:#dce4ec";
       postAuthorRow.append(postAvatar,postUsername);
     }else{
       const fallback=document.createElement("div");
       fallback.textContent=(postProfile?.username||"L").charAt(0).toUpperCase();
-      fallback.style.cssText="width:40px;height:40px;border-radius:50%;background:#142335;color:white;display:grid;place-items:center;font-weight:900";
+      fallback.style.cssText="width:38px;height:38px;border-radius:50%;background:#142335;color:white;display:grid;place-items:center;font-weight:900";
       postAuthorRow.append(fallback,postUsername);
     }
 
@@ -1126,7 +1668,7 @@ async function loadForum(){
 
     const date=document.createElement("small");
     date.textContent=new Date(post.created_at).toLocaleString();
-    date.style.color="#667587";
+    date.style.color="#8793a0";
 
     const voteArea=document.createElement("div");
     voteArea.style.cssText="display:flex;align-items:center;gap:10px;margin-top:14px";
@@ -1147,7 +1689,7 @@ async function loadForum(){
     voteArea.append(upvote,score,downvote);
 
     const commentsArea=document.createElement("div");
-    commentsArea.style.cssText="margin-top:18px;padding-top:14px;border-top:1px solid #e2e7ed";
+    commentsArea.style.cssText="margin-top:18px;padding-top:14px;border-top:1px solid #e5eaf0";
 
     const commentsTitle=document.createElement("strong");
     commentsTitle.textContent="💬 Comments";
@@ -1170,18 +1712,18 @@ async function loadForum(){
 
         const username=document.createElement("strong");
         username.textContent=profile?.username||"LEGO Member";
-        username.style.fontSize="13px";
+        username.style.fontSize="12px";
 
         if(profile?.avatar_url){
           const avatar=document.createElement("img");
           avatar.src=profile.avatar_url;
           avatar.alt="";
-          avatar.style.cssText="width:36px;height:36px;border-radius:50%;object-fit:cover;background:#dce4ec";
+          avatar.style.cssText="width:32px;height:32px;border-radius:50%;object-fit:cover;background:#dce4ec";
           authorRow.append(avatar,username);
         }else{
           const fallback=document.createElement("div");
           fallback.textContent=(profile?.username||"L").charAt(0).toUpperCase();
-          fallback.style.cssText="width:36px;height:36px;border-radius:50%;background:#142335;color:white;display:grid;place-items:center;font-weight:900";
+          fallback.style.cssText="width:32px;height:32px;border-radius:50%;background:#142335;color:white;display:grid;place-items:center;font-weight:900";
           authorRow.append(fallback,username);
         }
 
@@ -1191,7 +1733,7 @@ async function loadForum(){
 
         const commentDate=document.createElement("small");
         commentDate.textContent=new Date(comment.created_at).toLocaleString();
-        commentDate.style.color="#667587";
+        commentDate.style.color="#8793a0";
 
         commentCard.append(authorRow,commentBody,commentDate);
         commentsList.appendChild(commentCard);
@@ -1327,39 +1869,16 @@ async function addForumComment(postId,body){
 
 $("#forumPostForm").addEventListener("submit",createForumPost);
 
-async function updateProfileUI(session){
-  profileEditor.hidden=!session;
-
-  if(!session){
-    savedUsername.value="";
-    avatarPreview.hidden=true;
-    avatarPreview.removeAttribute("src");
-    return;
-  }
-
-  const {data,error}=await supabaseClient.from("profiles")
-    .select("username, avatar_url")
-    .eq("id",session.user.id)
-    .single();
-
-  if(error){
-    $("#profileMessage").textContent="Could not load profile: "+error.message;
-    return;
-  }
-
-  savedUsername.value=data.username||"";
-
-  if(data.avatar_url){
-    avatarPreview.src=data.avatar_url+"?t="+Date.now();
-    avatarPreview.hidden=false;
-  }else{
-    avatarPreview.hidden=true;
-    avatarPreview.removeAttribute("src");
-  }
-}
+/* Navigation highlighting */
+document.querySelectorAll(".side-link").forEach(link=>{
+  link.addEventListener("click",()=>{
+    document.querySelectorAll(".side-link").forEach(item=>item.classList.remove("active"));
+    link.classList.add("active");
+  });
+});
 
 function updateAuthUI(session){
-  logoutButton.hidden=!session;
+  $("#logoutButton").hidden=!session;
   $("#forumLoggedOut").hidden=Boolean(session);
   $("#forumComposer").hidden=!session;
   updateProfileUI(session);
