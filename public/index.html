@@ -65,7 +65,7 @@ const labels={sets:"LEGO sets",minifigs:"minifigures",parts:"bricks & parts"};
 const $=s=>document.querySelector(s);
 function showStatus(message,kind=""){const el=$("#status");el.textContent=message;el.className="status "+kind;el.style.display="block";}
 function setType(type){selectedType=type;document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.type===type)));$("#resultsTitle").textContent="Explore "+labels[type];$("#resultsHint").textContent="Search above to load live Rebrickable catalog results.";}
-document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>setType(b.dataset.type)));
+document.querySelectorAll("[data-type]").forEach(b=>b.addEventListener("click",()=>setType(b.dataset.type)));
 document.querySelectorAll("[data-q]").forEach(b=>b.addEventListener("click",()=>{$("#query").value=b.dataset.q;$("#searchForm").requestSubmit();}));
 async function checkHealth(){try{const r=await fetch("/api/health");const d=await r.json();$("#apiState").textContent=d.rebrickableConfigured?"API key configured":"API setup needed";$("#apiState").style.background=d.rebrickableConfigured?"#e8f5ed":"#fff4d7";$("#apiState").style.color=d.rebrickableConfigured?"#28784b":"#805d00";}catch{$("#apiState").textContent="Server unavailable";}}
 function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
@@ -73,5 +73,54 @@ function render(items){const grid=$("#results");if(!items.length){grid.innerHTML
 grid.innerHTML=items.map(item=>`<article class="card"><div class="pic">${item.image?`<img loading="lazy" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.name)}">`:"🧱"}</div><div class="body"><h3>${escapeHtml(item.name)}</h3><div class="meta">${escapeHtml(item.year||"Year not listed")}${item.numParts?` · ${escapeHtml(item.numParts)} parts`:""}</div><div class="id">${escapeHtml(item.id||"Catalog item")}</div>${item.url?`<div style="margin-top:8px"><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#245c8e;font-weight:800">View Rebrickable ↗</a></div>`:""}</div></article>`).join("");}
 $("#searchForm").addEventListener("submit",async e=>{e.preventDefault();const q=$("#query").value.trim();if(!q)return;showStatus("Searching Rebrickable…");$("#results").innerHTML='<div class="empty">Loading catalog results…</div>';$("#resultsHint").textContent=`Searching ${labels[selectedType]} for “${q}”.`;
 try{const response=await fetch(`/api/search?q=${encodeURIComponent(q)}&type=${encodeURIComponent(selectedType)}&page_size=24`);const data=await response.json();if(!response.ok){showStatus(data.error||"Search failed.", "error");$("#results").innerHTML='<div class="empty">Catalog results are not available yet.</div>';return;}render(data.results||[]);showStatus(`${(data.results||[]).length} results shown · ${data.count??0} total catalog matches.`,"good");}catch{showStatus("Could not reach GPBrickSearch. Make sure the server is running.","error");$("#results").innerHTML='<div class="empty">Server connection unavailable.</div>';}});checkHealth();
+  const authForm = document.getElementById("authForm");
+const signupButton = document.getElementById("signupButton");
+const logoutButton = document.getElementById("logoutButton");
+const authMessage = document.getElementById("authMessage");
+
+authForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const email = document.getElementById("authEmail").value;
+  const password = document.getElementById("authPassword").value;
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  authMessage.textContent = error
+    ? error.message
+    : "You are now logged in!";
+});
+
+signupButton.addEventListener("click", async () => {
+  const email = document.getElementById("authEmail").value;
+  const password = document.getElementById("authPassword").value;
+
+  if (!email || password.length < 6) {
+    authMessage.textContent = "Enter an email and a password with at least 6 characters.";
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  authMessage.textContent = error
+    ? error.message
+    : "Account created! Check your email if confirmation is required.";
+});
+
+logoutButton.addEventListener("click", async () => {
+  const { error } = await supabaseClient.auth.signOut();
+  authMessage.textContent = error ? error.message : "You are logged out.";
+});
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  logoutButton.hidden = !session;
+});
 </script>
-</body></html>
+</body>
+</html>
