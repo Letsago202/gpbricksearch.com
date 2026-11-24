@@ -22,8 +22,7 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
 </style>
 </head>
 <body>
-<header><a class="brand" href="/"><span class="logo">GP</span>GPBrickSearch</a><nav><a href="#search">Search</a><a href="#catalog">Catalog</a><a href="#prices">Price Guide</a><a href="#collection">My Collection</a></nav></header>
-<main>
+<header><a class="brand" href="/"><span class="logo">GP</span>GPBrickSearch</a><nav><a href="#search">Search</a><a href="#catalog">Catalog</a><a href="#prices">Price Guide</a><a href="#collection">My Collection</a><a href="#forum">Forum</a></nav></header><main>
 <section class="hero" id="search"><div class="kicker">The LEGO discovery engine</div><h1>Everything LEGO.<br>One Search.</h1><p>Find minifigures, sets and parts. Explore the catalog and discover your next collectible.</p>
 <form class="search" id="searchForm"><input id="query" placeholder="Try a name, set number or part number…" autocomplete="off" required><button type="submit">Search</button></form>
 <div class="quick"><button type="button" data-q="Batman">Batman</button><button type="button" data-q="75192">75192</button><button type="button" data-q="3001">3001</button><button type="button" data-q="Star Wars">Star Wars</button></div></section>
@@ -97,6 +96,59 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
 
   </div>
 </div>
+</section>
+
+<section class="panel" id="forum" style="margin-bottom:20px">
+  <div class="kicker" style="color:#b51f27">The LEGO community</div>
+  <h2>GPBrickTalk 🧱</h2>
+  <p>Share your builds, discuss LEGO news, ask questions and connect with other LEGO fans.</p>
+
+  <div id="forumLoggedOut">
+    <p>Log in to create posts, comment and vote. Everyone can browse discussions.</p>
+  </div>
+
+  <div id="forumComposer" hidden>
+    <h3>Create a discussion</h3>
+    <form id="forumPostForm">
+      <label for="forumCategory">Category</label>
+      <select id="forumCategory" required>
+        <option>General</option>
+        <option>LEGO Sets</option>
+        <option>Minifigures</option>
+        <option>MOCs & Builds</option>
+        <option>LEGO News</option>
+        <option>Questions</option>
+      </select>
+
+      <label for="forumTitle">Post title</label>
+      <input id="forumTitle" maxlength="160" minlength="5"
+        placeholder="What would you like to discuss?" required>
+
+      <label for="forumBody">Your post</label>
+      <textarea id="forumBody" maxlength="10000" rows="4"
+        placeholder="Share your thoughts with the community..." required></textarea>
+
+      <button class="primary" type="submit" style="padding:12px 18px;margin-top:12px">
+        Publish Discussion
+      </button>
+    </form>
+    <p id="forumMessage" role="status"></p>
+  </div>
+
+  <div class="rowhead">
+    <div>
+      <h3>Community Discussions</h3>
+      <p>See what LEGO fans are talking about.</p>
+    </div>
+    <select id="forumSort" aria-label="Sort discussions">
+      <option value="new">Newest</option>
+      <option value="top">Top Rated</option>
+    </select>
+  </div>
+
+  <div id="forumFeed">
+    <p>Loading discussions...</p>
+  </div>
 </section>
 
 <section class="panel" id="account" style="margin-bottom:20px">
