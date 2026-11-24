@@ -166,6 +166,32 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
   </form>
 <div id="profileEditor" hidden style="margin-top:20px;padding:16px;background:#f5f7f9;border-radius:12px">
   <h3>My Profile</h3>
+  <div style="margin:15px 0">
+  <label for="avatarUpload">My Profile Picture</label>
+  <input
+    id="avatarUpload"
+    type="file"
+    accept="image/png,image/jpeg,image/webp"
+  >
+
+  <img
+    id="avatarPreview"
+    alt="Your profile picture"
+    hidden
+    style="width:100px;height:100px;object-fit:cover;border-radius:50%;margin-top:12px"
+  >
+
+  <button
+    class="primary"
+    type="button"
+    id="uploadAvatarButton"
+    style="padding:10px 16px;margin-top:10px"
+  >
+    Upload Profile Picture
+  </button>
+
+  <p id="avatarMessage" role="status"></p>
+</div>
   <label for="savedUsername">My Username</label>
   <input id="savedUsername" type="text" maxlength="30" placeholder="Choose your username">
   <button class="primary" type="button" id="saveUsernameButton" style="padding:10px 16px;margin-top:10px">
@@ -282,7 +308,75 @@ const profileEditor = document.getElementById("profileEditor");
 const savedUsername = document.getElementById("savedUsername");
 const profileMessage = document.getElementById("profileMessage");
 const saveUsernameButton = document.getElementById("saveUsernameButton");
+const avatarUpload = document.getElementById("avatarUpload");
+const avatarPreview = document.getElementById("avatarPreview");
+const avatarMessage = document.getElementById("avatarMessage");
+const uploadAvatarButton = document.getElementById("uploadAvatarButton");
 
+avatarUpload.addEventListener("change", () => {
+  const file = avatarUpload.files[0];
+
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) {
+    avatarMessage.textContent = "Please choose an image smaller than 2 MB.";
+    avatarUpload.value = "";
+    return;
+  }
+
+  avatarPreview.src = URL.createObjectURL(file);
+  avatarPreview.hidden = false;
+  avatarMessage.textContent = "Preview ready!";
+});
+
+uploadAvatarButton.addEventListener("click", async () => {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+if (!session) {
+  avatarMessage.textContent = "Please log in first.";
+  return;
+}
+
+  const file = avatarUpload.files[0];
+
+  if (!file) {
+    avatarMessage.textContent = "Please choose a picture first.";
+    return;
+  }
+
+  const fileExt = file.name.split(".").pop().toLowerCase();
+  const filePath = `${session.user.id}/avatar.${fileExt}`;
+
+  avatarMessage.textContent = "Uploading picture...";
+
+  const { error } = await supabaseClient.storage
+    .from("avatars")
+    .upload(filePath, file, {
+      upsert: true,
+      contentType: file.type
+    });
+
+  if (error) {
+    avatarMessage.textContent = "Upload failed: " + error.message;
+    return;
+  }
+
+  const { data } = supabaseClient.storage
+    .from("avatars")
+    .getPublicUrl(filePath);
+
+  const { error: profileError } = await supabaseClient
+    .from("profiles")
+    .update({ avatar_url: data.publicUrl })
+    .eq("id", session.user.id);
+
+  if (profileError) {
+    avatarMessage.textContent = "Picture uploaded, but profile update failed: " + profileError.message;
+    return;
+  }
+
+  avatarMessage.textContent = "Profile picture uploaded successfully! 🎉";
+});
 saveUsernameButton.addEventListener("click", async () => {
   const { data: { session } } = await supabaseClient.auth.getSession();
 
@@ -832,17 +926,19 @@ document.getElementById("forumPostForm")
 async function updateProfileUI(session) {
   const profileEditor = document.getElementById("profileEditor");
   const savedUsername = document.getElementById("savedUsername");
-
+const avatarPreview = document.getElementById("avatarPreview");
   profileEditor.hidden = !session;
 
-  if (!session) {
-    savedUsername.value = "";
-    return;
-  }
+if (!session) {
+  savedUsername.value = "";
+  avatarPreview.hidden = true;
+  avatarPreview.removeAttribute("src");
+  return;
+}
 
   const { data, error } = await supabaseClient
     .from("profiles")
-    .select("username")
+    .select("username, avatar_url")
     .eq("id", session.user.id)
     .single();
 
@@ -853,6 +949,13 @@ async function updateProfileUI(session) {
   }
 
   savedUsername.value = data.username || "";
+  if (data.avatar_url) {
+  avatarPreview.src = data.avatar_url + "?t=" + Date.now();
+  avatarPreview.hidden = false;
+} else {
+  avatarPreview.hidden = true;
+  avatarPreview.removeAttribute("src");
+}
 }
 supabaseClient.auth.onAuthStateChange((_event, session) => {
   logoutButton.hidden = !session;
