@@ -156,6 +156,9 @@ footer{background:#111b27;color:#d7e0e8;padding:28px 20px}.foot{max-width:1160px
   <p>Create an account or sign in to manage your LEGO collection.</p>
 
   <form id="authForm">
+    <input id="profileUsername" type="text"
+  placeholder="Choose a username"
+  maxlength="30">
     <input id="authEmail" type="email" placeholder="Email address" required>
     <input id="authPassword" type="password" placeholder="Password (at least 6 characters)" minlength="6" required>
     <button class="primary" type="submit" id="loginButton">Log In</button>
@@ -285,18 +288,23 @@ authForm.addEventListener("submit", async (event) => {
 });
 
 signupButton.addEventListener("click", async () => {
-  const email = document.getElementById("authEmail").value;
-  const password = document.getElementById("authPassword").value;
+const email = document.getElementById("authEmail").value;
+const password = document.getElementById("authPassword").value;
+const username = document.getElementById("profileUsername").value.trim();
 
-  if (!email || password.length < 6) {
-    authMessage.textContent = "Enter an email and a password with at least 6 characters.";
-    return;
+if (!email || password.length < 6 || !username) {
+authMessage.textContent = "Enter an email, a username, and a password with at least 6 characters.";    return;
   }
 
-  const { error } = await supabaseClient.auth.signUp({
-    email,
-    password
-  });
+const { error } = await supabaseClient.auth.signUp({
+  email,
+  password,
+  options: {
+    data: {
+      username: username
+    }
+  }
+});
 
   authMessage.textContent = error
     ? error.message
